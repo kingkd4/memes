@@ -875,8 +875,8 @@ transform: translateX(-50%) translateY(0);
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DB ──────────────────────────────────────────────────────────────
-var DB_NAME = 'memebox_v2', DB_VER = 1, db;
+// ── DB ───────────────────────────────────────────────────────────────
+var DB_NAME = 'memebox_v3', DB_VER = 1, db;
 
 function openDB() {
   return new Promise(function(res, rej) {
@@ -893,61 +893,114 @@ function openDB() {
     };
     req.onsuccess = function(e) { db = e.target.result; res(); };
     req.onerror = function() { rej(req.error); };
+    req.onblocked = function() { rej(new Error('DB blocked')); };
   });
 }
 
 function getStore(name, mode) {
   return db.transaction(name, mode || 'readonly').objectStore(name);
 }
+
 function dbGet(store, key) {
   return new Promise(function(res, rej) {
     var r = getStore(store).get(key);
     r.onsuccess = function() { res(r.result); };
-    r.onerror = rej;
+    r.onerror = function() { rej(r.error); };
   });
 }
+
 function dbGetAll(store, idx, val) {
   return new Promise(function(res, rej) {
-    var r = (idx !== undefined && val !== undefined)
-      ? getStore(store).index(idx).getAll(val)
-      : getStore(store).getAll();
-    r.onsuccess = function() { res(r.result); };
-    r.onerror = rej;
+    var r;
+    try {
+      r = (idx !== undefined && val !== undefined)
+        ? getStore(store).index(idx).getAll(val)
+        : getStore(store).getAll();
+    } catch(e) { rej(e); return; }
+    r.onsuccess = function() { res(r.result || []); };
+    r.onerror = function() { rej(r.error); };
   });
 }
+
 function dbPut(store, data) {
   return new Promise(function(res, rej) {
     var r = getStore(store, 'readwrite').put(data);
     r.onsuccess = function() { res(r.result); };
-    r.onerror = rej;
+    r.onerror = function() { rej(r.error); };
   });
 }
+
 function dbDel(store, key) {
   return new Promise(function(res, rej) {
     var r = getStore(store, 'readwrite').delete(key);
     r.onsuccess = function() { res(); };
-    r.onerror = rej;
+    r.onerror = function() { rej(r.error); };
   });
 }
+
 function dbCount(store, idx, val) {
   return new Promise(function(res, rej) {
     var r = idx ? getStore(store).index(idx).count(val) : getStore(store).count();
     r.onsuccess = function() { res(r.result); };
-    r.onerror = rej;
+    r.onerror = function() { rej(r.error); };
   });
 }
 
 // ── STATE ────────────────────────────────────────────────────────────
-var currentFolder = 'all', folders = [], memes = [];
-var selecting = false, selected = {}, selCount = 0;
+var currentFolder = 'all';
+var folders = [];
+var memes = [];
+var selecting = false;
+var selected = {};
 var lightboxId = null;
 
-// ── INIT ─────────────────────────────────────────────────────────────
-async function init() {
-  await openDB();
-  folders = await dbGetAll('folders');
-  renderFolderBar();
-  await renderGrid();
+// ── INIT — pure .then() chains, no async/await ────────────────────────
+function init() {
+  // Show empty state immediately so UI isn't blank while DB loads
+  showEmptyState();
+  renderFolderBarBasic();
+
+  openDB().then(function() {
+    return dbGetAll('folders');
+  }).then(function(result) {
+    folders = result || [];
+    renderFolderBar();
+    return renderGrid();
+  }).catch(function(err) {
+    console.error('DB init error:', err);
+    // Still show the UI even if DB fails
+    renderFolderBar();
+    showEmptyState();
+  });
+}
+
+// Show basic folder bar (All chip + New Folder) before DB is ready
+function renderFolderBarBasic() {
+  var bar = document.getElementById('folder-bar');
+  bar.innerHTML = '';
+  var chip = document.createElement('div');
+  chip.className = 'folder-chip active';
+  chip.innerHTML = '🌸 All <span class="chip-count" id="cnt-all">0</span>';
+  chip.onclick = function() { switchFolder('all'); };
+  bar.appendChild(chip);
+  var nb = document.createElement('button');
+  nb.className = 'new-folder-btn';
+  nb.textContent = '✦ New Folder';
+  nb.onclick = showNewFolderModal;
+  bar.appendChild(nb);
+}
+
+function showEmptyState() {
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  var emp = document.createElement('div');
+  emp.className = 'empty';
+  emp.innerHTML =
+    '<div class="empty-flower">🌷</div>' +
+    '<div class="empty-title">nothing here yet~</div>' +
+    '<div class="empty-sub">tap <strong style="color:#e07fa8">＋</strong> to add memes<br>from your photos</div>';
+  grid.appendChild(emp);
+  document.getElementById('count-label').textContent = '';
 }
 
 // ── FOLDERS ──────────────────────────────────────────────────────────
@@ -955,16 +1008,18 @@ function renderFolderBar() {
   var bar = document.getElementById('folder-bar');
   bar.innerHTML = '';
   bar.appendChild(makeChip('🌸 All', 'all'));
-  folders.forEach(function(f) {
-    var chip = makeChip('📂 ' + f.name, f.name);
-    var timer;
-    chip.addEventListener('touchstart', function() {
-      timer = setTimeout(function() { showFolderOptions(f.name); }, 600);
-    }, { passive: true });
-    chip.addEventListener('touchend', function() { clearTimeout(timer); });
-    chip.addEventListener('touchmove', function() { clearTimeout(timer); });
-    bar.appendChild(chip);
-  });
+  for (var i = 0; i < folders.length; i++) {
+    (function(f) {
+      var chip = makeChip('📂 ' + f.name, f.name);
+      var timer;
+      chip.addEventListener('touchstart', function() {
+        timer = setTimeout(function() { showFolderOptions(f.name); }, 600);
+      }, { passive: true });
+      chip.addEventListener('touchend', function() { clearTimeout(timer); });
+      chip.addEventListener('touchmove', function() { clearTimeout(timer); });
+      bar.appendChild(chip);
+    })(folders[i]);
+  }
   var nb = document.createElement('button');
   nb.className = 'new-folder-btn';
   nb.textContent = '✦ New Folder';
@@ -976,118 +1031,124 @@ function renderFolderBar() {
 function makeChip(label, folder) {
   var c = document.createElement('div');
   c.className = 'folder-chip' + (currentFolder === folder ? ' active' : '');
-  c.dataset.folder = folder;
   c.innerHTML = label + ' <span class="chip-count" id="cnt-' + folder + '">0</span>';
   c.onclick = function() { switchFolder(folder); };
   return c;
 }
 
-async function updateCounts() {
-  var n = await dbCount('memes');
-  var el = document.getElementById('cnt-all');
-  if (el) el.textContent = n;
+function updateCounts() {
+  dbCount('memes').then(function(n) {
+    var el = document.getElementById('cnt-all');
+    if (el) el.textContent = n;
+  }).catch(function() {});
+
   for (var i = 0; i < folders.length; i++) {
-    var c = await dbCount('memes', 'folder', folders[i].name);
-    var fe = document.getElementById('cnt-' + folders[i].name);
-    if (fe) fe.textContent = c;
+    (function(fname) {
+      dbCount('memes', 'folder', fname).then(function(c) {
+        var fe = document.getElementById('cnt-' + fname);
+        if (fe) fe.textContent = c;
+      }).catch(function() {});
+    })(folders[i].name);
   }
 }
 
-async function switchFolder(f) {
+function switchFolder(f) {
   currentFolder = f;
   exitSelect();
   renderFolderBar();
-  await renderGrid();
+  renderGrid();
 }
 
 // ── GRID ─────────────────────────────────────────────────────────────
-async function renderGrid() {
+function renderGrid() {
   var grid = document.getElementById('grid');
   grid.innerHTML = '';
-  memes = currentFolder === 'all'
-    ? await dbGetAll('memes')
-    : await dbGetAll('memes', 'folder', currentFolder);
-  memes.sort(function(a, b) { return b.id - a.id; });
 
-  var cl = document.getElementById('count-label');
-  cl.textContent = memes.length
-    ? memes.length + ' meme' + (memes.length !== 1 ? 's' : '') + ' ✦'
-    : '';
+  var p = currentFolder === 'all'
+    ? dbGetAll('memes')
+    : dbGetAll('memes', 'folder', currentFolder);
 
-  if (!memes.length) {
-    var emp = document.createElement('div');
-    emp.className = 'empty';
-    emp.innerHTML =
-      '<div class="empty-flower">🌷</div>' +
-      '<div class="empty-title">nothing here yet~</div>' +
-      '<div class="empty-sub">tap <strong style="color:#e07fa8">＋</strong> to add memes<br>from your photos</div>';
-    grid.appendChild(emp);
+  return p.then(function(result) {
+    memes = result || [];
+    memes.sort(function(a, b) { return b.id - a.id; });
+
+    var cl = document.getElementById('count-label');
+    cl.textContent = memes.length
+      ? memes.length + ' meme' + (memes.length !== 1 ? 's' : '') + ' ✦'
+      : '';
+
+    if (!memes.length) {
+      showEmptyState();
+      updateCounts();
+      return;
+    }
+
+    for (var i = 0; i < memes.length; i++) {
+      (function(m) {
+        var card = document.createElement('div');
+        card.className = 'meme-card' + (selected[m.id] ? ' selected' : '');
+
+        var img = document.createElement('img');
+        img.src = m.dataUrl;
+        img.loading = 'lazy';
+        card.appendChild(img);
+
+        var badge = document.createElement('div');
+        badge.className = 'sel-badge';
+        badge.textContent = '✓';
+        card.appendChild(badge);
+
+        var pressTimer;
+        card.addEventListener('touchstart', function() {
+          pressTimer = setTimeout(function() {
+            if (!selecting) enterSelect();
+            toggleSel(m.id, card);
+          }, 500);
+        }, { passive: true });
+        card.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+        card.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
+        card.addEventListener('click', function() {
+          if (selecting) { toggleSel(m.id, card); }
+          else { openLightbox(m.id); }
+        });
+
+        grid.appendChild(card);
+      })(memes[i]);
+    }
     updateCounts();
-    return;
-  }
-
-  memes.forEach(function(m) {
-    var card = document.createElement('div');
-    card.className = 'meme-card' + (selected[m.id] ? ' selected' : '');
-
-    var img = document.createElement('img');
-    img.src = m.dataUrl;
-    img.loading = 'lazy';
-    card.appendChild(img);
-
-    var badge = document.createElement('div');
-    badge.className = 'sel-badge';
-    badge.textContent = '✓';
-    card.appendChild(badge);
-
-    var timer;
-    card.addEventListener('touchstart', function() {
-      timer = setTimeout(function() {
-        if (!selecting) enterSelect();
-        toggleSel(m.id, card);
-      }, 500);
-    }, { passive: true });
-    card.addEventListener('touchend', function() { clearTimeout(timer); });
-    card.addEventListener('touchmove', function() { clearTimeout(timer); });
-
-    card.addEventListener('click', function() {
-      if (selecting) { toggleSel(m.id, card); }
-      else { openLightbox(m.id); }
-    });
-
-    grid.appendChild(card);
+  }).catch(function(err) {
+    console.error('renderGrid error:', err);
+    showEmptyState();
   });
-  updateCounts();
 }
 
 // ── SELECT ────────────────────────────────────────────────────────────
 function enterSelect() {
   selecting = true;
   selected = {};
-  selCount = 0;
   document.getElementById('sel-bar').classList.add('visible');
   document.getElementById('select-btn').classList.add('active');
 }
+
 function exitSelect() {
   selecting = false;
   selected = {};
-  selCount = 0;
   var cards = document.querySelectorAll('.meme-card.selected');
   for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
   document.getElementById('sel-bar').classList.remove('visible');
   document.getElementById('select-btn').classList.remove('active');
 }
+
 function toggleSel(id, card) {
   if (selected[id]) {
     delete selected[id];
-    selCount--;
     card.classList.remove('selected');
   } else {
     selected[id] = true;
-    selCount++;
     card.classList.add('selected');
   }
 }
+
 function getSelIds() {
   return Object.keys(selected).map(function(k) { return parseInt(k, 10); });
 }
@@ -1095,15 +1156,24 @@ function getSelIds() {
 document.getElementById('select-btn').onclick = function() {
   if (selecting) exitSelect(); else enterSelect();
 };
+
 document.getElementById('sel-cancel').onclick = exitSelect;
-document.getElementById('sel-delete').onclick = async function() {
+
+document.getElementById('sel-delete').onclick = function() {
   var ids = getSelIds();
   if (!ids.length) return;
-  for (var i = 0; i < ids.length; i++) await dbDel('memes', ids[i]);
-  showToast('🗑 Deleted ' + ids.length);
-  exitSelect();
-  await renderGrid();
+  function delNext(i) {
+    if (i >= ids.length) {
+      showToast('🗑 Deleted ' + ids.length);
+      exitSelect();
+      renderGrid();
+      return;
+    }
+    dbDel('memes', ids[i]).then(function() { delNext(i + 1); }).catch(function() { delNext(i + 1); });
+  }
+  delNext(0);
 };
+
 document.getElementById('sel-move').onclick = function() {
   var ids = getSelIds();
   if (!ids.length) return;
@@ -1111,19 +1181,29 @@ document.getElementById('sel-move').onclick = function() {
 };
 
 // ── UPLOAD ────────────────────────────────────────────────────────────
-document.getElementById('upload-input').addEventListener('change', async function(e) {
+document.getElementById('upload-input').addEventListener('change', function(e) {
   var files = Array.from(e.target.files);
   if (!files.length) return;
   var count = 0;
-  for (var i = 0; i < files.length; i++) {
-    var url = await toDataUrl(files[i]);
-    var folder = currentFolder === 'all' ? '' : currentFolder;
-    await dbPut('memes', { dataUrl: url, folder: folder, added: Date.now() });
-    count++;
+
+  function processNext(i) {
+    if (i >= files.length) {
+      e.target.value = '';
+      showToast('🌸 Added ' + count + ' meme' + (count !== 1 ? 's' : ''));
+      renderGrid();
+      return;
+    }
+    toDataUrl(files[i]).then(function(url) {
+      var folder = currentFolder === 'all' ? '' : currentFolder;
+      return dbPut('memes', { dataUrl: url, folder: folder, added: Date.now() });
+    }).then(function() {
+      count++;
+      processNext(i + 1);
+    }).catch(function() {
+      processNext(i + 1);
+    });
   }
-  e.target.value = '';
-  showToast('🌸 Added ' + count + ' meme' + (count !== 1 ? 's' : ''));
-  await renderGrid();
+  processNext(0);
 });
 
 function toDataUrl(file) {
@@ -1155,7 +1235,7 @@ document.getElementById('lb-close').onclick = function() {
   lightboxId = null;
 };
 
-document.getElementById('lb-share').onclick = async function() {
+document.getElementById('lb-share').onclick = function() {
   var m = getMeme(lightboxId);
   if (!m) return;
   if (navigator.share) {
@@ -1164,15 +1244,14 @@ document.getElementById('lb-share').onclick = async function() {
       var ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/gif' ? '.gif' : '.jpg');
       var file = new File([blob], 'meme' + ext, { type: blob.type });
       var shareData = { files: [file] };
-      if (navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
+      var canShare = navigator.canShare ? navigator.canShare(shareData) : true;
+      if (canShare) {
+        navigator.share(shareData).then(function() {}).catch(function(err) {
+          if (!err || err.name !== 'AbortError') openImageTab(m.dataUrl);
+        });
         return;
       }
-      await navigator.share(shareData);
-      return;
-    } catch(err) {
-      if (err && err.name === 'AbortError') return;
-    }
+    } catch(e) {}
   }
   openImageTab(m.dataUrl);
 };
@@ -1182,27 +1261,29 @@ document.getElementById('lb-move').onclick = function() {
   showMoveModal([lightboxId], true);
 };
 
-document.getElementById('lb-delete').onclick = async function() {
+document.getElementById('lb-delete').onclick = function() {
   if (!lightboxId) return;
-  await dbDel('memes', lightboxId);
-  document.getElementById('lightbox').classList.remove('open');
-  lightboxId = null;
-  showToast('🗑 Deleted');
-  await renderGrid();
+  var id = lightboxId;
+  dbDel('memes', id).then(function() {
+    document.getElementById('lightbox').classList.remove('open');
+    lightboxId = null;
+    showToast('🗑 Deleted');
+    renderGrid();
+  }).catch(function() {});
 };
 
 function openImageTab(dataUrl) {
   var html = '<!DOCTYPE html><html><head>'
     + '<meta name="viewport" content="width=device-width,initial-scale=1">'
     + '<style>*{margin:0;padding:0;box-sizing:border-box}'
-    + 'body{background:#fdf0f5;display:flex;align-items:center;justify-content:center;min-height:100vh}'
+    + 'body{background:#fdf0f5;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;min-height:100vh}'
     + 'img{max-width:100%;max-height:100vh;border-radius:12px}'
     + 'p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c8a0b8;font-family:sans-serif;font-size:13px}'
     + '</style></head><body>'
 
 ```
 + '<img src="' + dataUrl + '">'
-+ '<p>Hold image → Save to Photos or Copy</p>'
++ '<p>Hold image to Save to Photos or Copy</p>'
 + '</body></html>';
 ```
 
@@ -1210,7 +1291,7 @@ var win = window.open(’’, ‘_blank’);
 if (win) {
 win.document.write(html);
 win.document.close();
-showToast(‘Hold image → Save to Photos’);
+showToast(‘Hold image to Save to Photos’);
 } else {
 showToast(‘Allow pop-ups then try again’);
 }
@@ -1245,48 +1326,69 @@ openModal(‘New Folder ✦’,
 ‘<button class="modal-btn secondary" id="fn-cancel">Cancel</button>’);
 var inp = document.getElementById(‘fn-input’);
 setTimeout(function() { inp.focus(); }, 80);
-inp.addEventListener(‘keydown’, function(e) { if (e.key === ‘Enter’) doCreate(); });
+inp.addEventListener(‘keydown’, function(ev) { if (ev.key === ‘Enter’) doCreate(); });
 document.getElementById(‘fn-ok’).onclick = doCreate;
 document.getElementById(‘fn-cancel’).onclick = closeModal;
 
-async function doCreate() {
+function doCreate() {
 var name = document.getElementById(‘fn-input’).value.trim();
 if (!name) { showToast(‘Enter a name ✦’); return; }
-if (folders.some(function(f) { return f.name === name; })) { showToast(‘Already exists~’); return; }
-await dbPut(‘folders’, { name: name });
+for (var i = 0; i < folders.length; i++) {
+if (folders[i].name === name) { showToast(‘Already exists~’); return; }
+}
+dbPut(‘folders’, { name: name }).then(function() {
 folders.push({ name: name });
 closeModal();
 renderFolderBar();
 showToast(‘📂 Created “’ + name + ‘”’);
+}).catch(function() { showToast(‘Error saving folder’); });
 }
 }
 
 function showMoveModal(ids, fromLb) {
-var opts = folders.map(function(f) {
-return ‘<div class="folder-option" data-f="' + f.name + '">📂 ’ + f.name + ‘</div>’;
-}).join(’’);
+var opts = ‘’;
+for (var i = 0; i < folders.length; i++) {
+opts += ’<div class="folder-option" data-f="' + folders[i].name + '">📂 ’ + folders[i].name + ‘</div>’;
+}
 openModal(‘Move to… ✦’,
 ‘<div class="folder-list">’ +
 ‘<div class="folder-option" data-f="">🌸 All (no folder)</div>’ +
 opts + ‘</div>’ +
 ‘<button class="modal-btn secondary" id="mv-cancel">Cancel</button>’);
 document.getElementById(‘mv-cancel’).onclick = closeModal;
-var opts2 = document.querySelectorAll(’.folder-option’);
-for (var i = 0; i < opts2.length; i++) {
+
+var optEls = document.querySelectorAll(’.folder-option’);
+for (var j = 0; j < optEls.length; j++) {
 (function(opt) {
-opt.onclick = async function() {
-var target = opt.dataset.f;
-for (var j = 0; j < ids.length; j++) {
-var m = await dbGet(‘memes’, ids[j]);
-if (m) { m.folder = target; await dbPut(‘memes’, m); }
-}
+opt.onclick = function() {
+var target = opt.getAttribute(‘data-f’);
+var idx = 0;
+function moveNext() {
+if (idx >= ids.length) {
 closeModal();
-if (fromLb) { document.getElementById(‘lightbox’).classList.remove(‘open’); lightboxId = null; }
-else { exitSelect(); }
+if (fromLb) {
+document.getElementById(‘lightbox’).classList.remove(‘open’);
+lightboxId = null;
+} else {
+exitSelect();
+}
 showToast(’📂 Moved ’ + ids.length);
-await renderGrid();
+renderGrid();
+return;
+}
+dbGet(‘memes’, ids[idx]).then(function(m) {
+if (m) {
+m.folder = target;
+return dbPut(‘memes’, m);
+}
+}).then(function() {
+idx++;
+moveNext();
+}).catch(function() { idx++; moveNext(); });
+}
+moveNext();
 };
-})(opts2[i]);
+})(optEls[j]);
 }
 }
 
@@ -1297,42 +1399,65 @@ openModal(’”’ + name + ‘”’,
 ‘<button class="modal-btn secondary" id="fo-cancel">Cancel</button>’);
 document.getElementById(‘fo-cancel’).onclick = closeModal;
 document.getElementById(‘fo-rename’).onclick = function() { closeModal(); showRenameModal(name); };
-document.getElementById(‘fo-delete’).onclick = async function() {
-var all = await dbGetAll(‘memes’, ‘folder’, name);
-for (var i = 0; i < all.length; i++) { all[i].folder = ‘’; await dbPut(‘memes’, all[i]); }
-await dbDel(‘folders’, name);
+document.getElementById(‘fo-delete’).onclick = function() {
+dbGetAll(‘memes’, ‘folder’, name).then(function(all) {
+all = all || [];
+var i = 0;
+function clearNext() {
+if (i >= all.length) {
+return dbDel(‘folders’, name);
+}
+all[i].folder = ‘’;
+return dbPut(‘memes’, all[i]).then(function() { i++; return clearNext(); });
+}
+return clearNext();
+}).then(function() {
 folders = folders.filter(function(f) { return f.name !== name; });
 if (currentFolder === name) currentFolder = ‘all’;
 closeModal();
 renderFolderBar();
-await renderGrid();
+renderGrid();
 showToast(‘🗑 Folder deleted’);
+}).catch(function() { showToast(‘Error deleting folder’); });
 };
 }
 
-function showRenameModal(old) {
+function showRenameModal(oldName) {
 openModal(‘Rename ✦’,
-‘<input class="modal-input" id="rn-input" type="text" value="' + old + '" maxlength="30">’ +
+‘<input class="modal-input" id="rn-input" type="text" value="' + oldName + '" maxlength="30">’ +
 ‘<button class="modal-btn primary" id="rn-ok">Save</button>’ +
 ‘<button class="modal-btn secondary" id="rn-cancel">Cancel</button>’);
 var inp = document.getElementById(‘rn-input’);
 setTimeout(function() { inp.focus(); inp.select(); }, 80);
 document.getElementById(‘rn-cancel’).onclick = closeModal;
-document.getElementById(‘rn-ok’).onclick = async function() {
+document.getElementById(‘rn-ok’).onclick = function() {
 var nw = inp.value.trim();
-if (!nw || nw === old) { closeModal(); return; }
-if (folders.some(function(f) { return f.name === nw; })) { showToast(‘Name taken~’); return; }
-await dbDel(‘folders’, old);
-await dbPut(‘folders’, { name: nw });
-var all = await dbGetAll(‘memes’, ‘folder’, old);
-for (var i = 0; i < all.length; i++) { all[i].folder = nw; await dbPut(‘memes’, all[i]); }
-folders = folders.filter(function(f) { return f.name !== old; });
+if (!nw || nw === oldName) { closeModal(); return; }
+for (var i = 0; i < folders.length; i++) {
+if (folders[i].name === nw) { showToast(‘Name taken~’); return; }
+}
+dbDel(‘folders’, oldName).then(function() {
+return dbPut(‘folders’, { name: nw });
+}).then(function() {
+return dbGetAll(‘memes’, ‘folder’, oldName);
+}).then(function(all) {
+all = all || [];
+var i = 0;
+function updateNext() {
+if (i >= all.length) return Promise.resolve();
+all[i].folder = nw;
+return dbPut(‘memes’, all[i]).then(function() { i++; return updateNext(); });
+}
+return updateNext();
+}).then(function() {
+folders = folders.filter(function(f) { return f.name !== oldName; });
 folders.push({ name: nw });
-if (currentFolder === old) currentFolder = nw;
+if (currentFolder === oldName) currentFolder = nw;
 closeModal();
 renderFolderBar();
-await renderGrid();
+renderGrid();
 showToast(‘✓ Renamed to “’ + nw + ‘”’);
+}).catch(function() { showToast(‘Error renaming’); });
 };
 }
 
@@ -1346,6 +1471,7 @@ clearTimeout(toastT);
 toastT = setTimeout(function() { t.classList.remove(‘show’); }, 2400);
 }
 
+// ── START ─────────────────────────────────────────────────────────────
 init();
 </script>
 
