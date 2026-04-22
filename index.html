@@ -6,1001 +6,937 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Meme Box">
-<title>Meme Box</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-title" content="Petal">
+<title>Petal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --safe-top: env(safe-area-inset-top, 44px);
-  --header-h: 0px;
-  --strip-h: 0px;
-  --count-h: 0px;
+  --cream:  #fdf6f0;
+  --blush:  #f2c4ce;
+  --rose:   #d4788a;
+  --deep:   #8b3a52;
+  --mauve:  #c9a0b0;
+  --lilac:  #e8d5e8;
+  --text:   #3d2030;
+  --muted:  #b8899a;
+  --white:  #ffffff;
+  --card:   #fff8f5;
+  --border: #f0dde5;
+  --safe-t: env(safe-area-inset-top, 44px);
+  --safe-b: env(safe-area-inset-bottom, 20px);
+}
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+html { height: -webkit-fill-available; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  /* NO overflow:hidden or position:fixed on body — Safari breaks */
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(232,213,232,0.45) 0%, transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(242,196,206,0.4) 0%, transparent 55%),
+    radial-gradient(circle at 70% 5%,  rgba(212,120,138,0.14) 0%, transparent 40%);
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: radial-gradient(circle, rgba(180,120,150,0.18) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-html, body {
-margin: 0; padding: 0;
-width: 100%; height: 100%;
-background: #fdf0f5;
-font-family: ‘DM Sans’, Arial, sans-serif;
--webkit-font-smoothing: antialiased;
-/* NO overflow:hidden / position:fixed on body — causes scroll issues in Safari */
-}
-
-- { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-#dotbg {
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background-image: radial-gradient(circle at center, rgba(224,127,168,0.38) 1.5px, transparent 1.5px);
-background-size: 22px 22px;
-pointer-events: none;
-z-index: 0;
-}
-#b1 {
-position: fixed; top: -60px; right: -60px;
-width: 200px; height: 200px;
-background: radial-gradient(circle, rgba(201,184,232,0.28) 0%, transparent 70%);
-border-radius: 50%;
-pointer-events: none; z-index: 0;
-}
-#b2 {
-position: fixed; bottom: 8%; left: -80px;
-width: 240px; height: 240px;
-background: radial-gradient(circle, rgba(184,228,216,0.22) 0%, transparent 70%);
-border-radius: 50%;
-pointer-events: none; z-index: 0;
-}
+/* ── APP SHELL ── normal-flow stacking for Safari sticky ── */
+#app { position: relative; z-index: 1; }
 
 /* ── HEADER ── */
 #header {
-position: fixed;
-top: 0; left: 0; right: 0;
-z-index: 20;
-background: rgba(253,240,245,0.97);
--webkit-backdrop-filter: blur(8px);
-backdrop-filter: blur(8px);
-border-bottom: 1.5px solid #f0d6e4;
-padding-left: 16px;
-padding-right: 16px;
-padding-bottom: 11px;
-padding-top: calc(var(–safe-top) + 8px);
+position: sticky; top: 0; z-index: 100;
+background: rgba(253,246,240,0.94);
+-webkit-backdrop-filter: saturate(180%) blur(12px);
+backdrop-filter: saturate(180%) blur(12px);
+border-bottom: 1px solid var(–border);
+padding-top: var(–safe-t);
 }
 #header-inner {
-display: -webkit-flex; display: flex;
--webkit-align-items: center; align-items: center;
--webkit-justify-content: space-between; justify-content: space-between;
+display: flex; align-items: center;
+justify-content: space-between;
+padding: 10px 16px 11px; gap: 10px;
 }
-#logo-wrap {
-display: -webkit-flex; display: flex;
--webkit-align-items: center; align-items: center;
-gap: 8px;
+#wordmark {
+font-family: ‘Cormorant Garamond’, Georgia, serif;
+font-style: italic; font-weight: 600;
+font-size: 27px; color: var(–rose);
+letter-spacing: -0.3px; line-height: 1;
+display: flex; align-items: center; gap: 7px;
 }
-#logo-flower {
-font-size: 22px;
-display: inline-block;
--webkit-animation: spin 10s linear infinite;
-animation: spin 10s linear infinite;
-}
-@-webkit-keyframes spin { 0%{-webkit-transform:rotate(0deg)} 100%{-webkit-transform:rotate(360deg)} }
-@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-#logo-text {
-font-family: ‘Playfair Display’, Georgia, serif;
-font-weight: 700; font-size: 22px; color: #e07fa8; letter-spacing: -0.3px;
-}
-#btns { display: -webkit-flex; display: flex; gap: 8px; }
-.hbtn {
-width: 42px; height: 42px; border-radius: 21px; border: none;
-background: -webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);
-background: linear-gradient(135deg,#f4a7c3,#e07fa8);
-box-shadow: 0 4px 14px rgba(224,127,168,0.45);
+#hdr-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.icon-btn {
+width: 40px; height: 40px; border-radius: 50%; border: none;
+background: linear-gradient(135deg, var(–blush), var(–rose));
 color: white; cursor: pointer;
-display: -webkit-flex; display: flex;
--webkit-align-items: center; align-items: center;
--webkit-justify-content: center; justify-content: center;
--webkit-appearance: none;
--webkit-transition: opacity 0.12s; transition: opacity 0.12s;
-flex-shrink: 0;
+display: flex; align-items: center; justify-content: center;
+box-shadow: 0 3px 12px rgba(212,120,138,0.38);
+-webkit-appearance: none; flex-shrink: 0;
+transition: opacity 0.15s, transform 0.15s;
 }
-.hbtn:active { opacity: 0.7; }
-.hbtn.lilac {
-background: -webkit-linear-gradient(135deg,#c9b8e8,#a080d0);
-background: linear-gradient(135deg,#c9b8e8,#a080d0);
-box-shadow: 0 4px 14px rgba(160,128,208,0.45);
+.icon-btn:active { opacity: 0.72; transform: scale(0.92); }
+.icon-btn.lit {
+background: linear-gradient(135deg, var(–lilac), #c9a0c9);
+box-shadow: 0 3px 12px rgba(180,130,200,0.38);
+}
+.icon-btn svg {
+width: 18px; height: 18px; stroke: white; fill: none;
+stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* ── FOLDER STRIP ── */
+/* ── FOLDER STRIP ── sticky below header ── */
 #folder-strip {
-position: fixed;
-left: 0; right: 0;
-z-index: 19;
-background: rgba(255,245,249,0.97);
--webkit-backdrop-filter: blur(6px);
-backdrop-filter: blur(6px);
-border-bottom: 1px solid #f0d6e4;
-padding: 9px 16px;
+position: sticky; top: 0; z-index: 99;
+/* Safari: sticky stacks correctly when both header & strip use sticky in normal flow */
+background: rgba(255,248,245,0.95);
+-webkit-backdrop-filter: blur(8px);
+backdrop-filter: blur(8px);
+border-bottom: 1px solid var(–border);
+padding: 8px 14px;
 overflow-x: auto; overflow-y: hidden;
-white-space: nowrap;
 -webkit-overflow-scrolling: touch;
 scrollbar-width: none;
+white-space: nowrap;
 }
 #folder-strip::-webkit-scrollbar { display: none; }
 
-.fc {
-display: -webkit-inline-flex; display: inline-flex;
--webkit-align-items: center; align-items: center;
-gap: 4px;
-background: #ffffff; border: 1.5px solid #f0d6e4; border-radius: 30px;
-padding: 6px 12px 6px 10px;
-font-family: ‘DM Sans’, Arial, sans-serif; font-size: 12px; font-weight: 500; color: #a8849a;
-white-space: nowrap; cursor: pointer; margin-right: 7px; vertical-align: middle;
+.chip {
+display: inline-flex; align-items: center; gap: 5px;
+padding: 5px 13px; border-radius: 20px;
+border: 1.5px solid var(–border);
+background: var(–white); color: var(–muted);
+font-family: ‘DM Sans’, sans-serif; font-size: 12px; font-weight: 500;
+cursor: pointer; margin-right: 6px; vertical-align: middle;
+white-space: nowrap; -webkit-appearance: none;
+user-select: none; -webkit-user-select: none;
+transition: all 0.18s;
 }
-.fc.on {
-background: -webkit-linear-gradient(135deg,#f4a7c3,#c9b8e8);
-background: linear-gradient(135deg,#f4a7c3,#c9b8e8);
-border-color: transparent; color: white;
-box-shadow: 0 3px 10px rgba(240,160,195,0.35);
+.chip.active {
+background: linear-gradient(135deg, var(–blush), var(–lilac));
+border-color: transparent; color: var(–deep);
+box-shadow: 0 2px 10px rgba(212,120,138,0.28);
 }
-.fc .cc {
-display: inline-block; border-radius: 10px; padding: 1px 6px; font-size: 10px;
-background: rgba(255,255,255,0.3);
+.chip .badge {
+background: rgba(0,0,0,0.09); border-radius: 10px;
+padding: 1px 6px; font-size: 10px; font-weight: 500;
 }
-.fc:not(.on) .cc { background: #fdf0f5; color: #a8849a; }
-.nfb {
-display: -webkit-inline-flex; display: inline-flex;
--webkit-align-items: center; align-items: center;
-background: transparent; border: 1.5px dashed #e8c4d8; border-radius: 30px;
-padding: 6px 13px; color: #c8a0b8;
-font-family: ‘DM Sans’, Arial, sans-serif; font-size: 12px; font-weight: 500;
-cursor: pointer; white-space: nowrap; vertical-align: middle;
--webkit-appearance: none;
+.chip.active .badge { background: rgba(255,255,255,0.38); }
+.new-folder-btn {
+display: inline-flex; align-items: center; gap: 5px;
+padding: 5px 13px; border-radius: 20px;
+border: 1.5px dashed var(–blush); background: transparent;
+color: var(–mauve); font-family: ‘DM Sans’, sans-serif;
+font-size: 12px; font-weight: 500;
+cursor: pointer; vertical-align: middle; -webkit-appearance: none;
 }
+.new-folder-btn:active { opacity: 0.7; }
 
-/* ── COUNT ROW ── */
-#count-row {
-position: fixed;
-left: 0; right: 0;
-z-index: 18;
-padding: 3px 18px 2px;
-font-style: italic; font-family: ‘Playfair Display’, Georgia, serif;
-font-size: 11px; color: #c8a0b8; line-height: 20px;
-background: rgba(253,240,245,0.6);
+/* ── TOOLBAR ── */
+#toolbar {
+display: flex; align-items: center;
+justify-content: space-between;
+padding: 6px 16px 4px; min-height: 30px;
+position: relative; z-index: 1;
 }
-
-/* ── SCROLL BOX ── fixed, overscroll within ── */
-#scroll-box {
-position: fixed;
-left: 0; right: 0; bottom: 0;
-overflow-y: auto; overflow-x: hidden;
--webkit-overflow-scrolling: touch;
-z-index: 1;
-padding: 10px 12px 100px;
+#count-label {
+font-family: ‘Cormorant Garamond’, Georgia, serif;
+font-style: italic; font-size: 12px; color: var(–mauve);
 }
-
-#grid { font-size: 0; line-height: 0; }
-
-.mc {
-display: inline-block;
-width: calc(33.333% - 8px);
-margin: 4px;
-border-radius: 13px;
-overflow: hidden;
-position: relative;
-background: #fff0f5;
-border: 2.5px solid transparent;
-box-shadow: 0 2px 8px rgba(200,140,180,0.12);
-cursor: pointer;
-vertical-align: top;
+#sort-btn {
+display: flex; align-items: center; gap: 4px;
+font-family: ‘DM Sans’, sans-serif; font-size: 11px;
+font-weight: 500; color: var(–muted);
+background: none; border: 1px solid var(–border);
+border-radius: 12px; padding: 3px 10px;
+cursor: pointer; -webkit-appearance: none;
 }
-.mc:after { content: ‘’; display: block; padding-top: 100%; }
-.mc img {
-position: absolute; top: 0; left: 0;
+#sort-btn:active { opacity: 0.7; }
+#sort-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+
+/* ── GRID ── */
+#grid-wrap { padding: 8px 10px calc(80px + var(–safe-b)); }
+#grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.meme-card {
+position: relative; border-radius: 12px; overflow: hidden;
+background: var(–card); border: 2px solid transparent;
+aspect-ratio: 1; cursor: pointer;
+box-shadow: 0 2px 8px rgba(140,80,100,0.1);
+transition: transform 0.14s, border-color 0.14s;
+}
+.meme-card img {
 width: 100%; height: 100%; object-fit: cover; display: block;
+pointer-events: none; -webkit-user-select: none; user-select: none;
 }
-.mc.sel { border-color: #e07fa8; box-shadow: 0 0 0 3px rgba(224,127,168,0.3); }
-.mc .ck {
+.meme-card.selected { border-color: var(–rose); box-shadow: 0 0 0 3px rgba(212,120,138,0.22); }
+.check {
 position: absolute; top: 5px; right: 5px;
-width: 22px; height: 22px; border-radius: 11px;
-background: #e07fa8; color: white;
-font-size: 12px; line-height: 22px; text-align: center;
-display: none; z-index: 3;
-box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+width: 22px; height: 22px; border-radius: 50%;
+background: var(–rose); color: white;
+font-size: 11px; display: none;
+align-items: center; justify-content: center;
+box-shadow: 0 2px 6px rgba(0,0,0,0.2); z-index: 2;
 }
-.mc.sel .ck { display: block; }
-
-#empty-wrap { padding: 60px 20px; text-align: center; }
-#empty-ico {
-font-size: 52px; display: block; margin-bottom: 14px;
--webkit-animation: bob 3s ease-in-out infinite;
-animation: bob 3s ease-in-out infinite;
+.meme-card.selected .check { display: flex; }
+.gif-badge {
+position: absolute; bottom: 5px; left: 5px;
+background: rgba(61,32,48,0.65); color: white;
+font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+padding: 2px 6px; border-radius: 5px;
+pointer-events: none; z-index: 2;
 }
-@-webkit-keyframes bob { 0%,100%{-webkit-transform:translateY(0)} 50%{-webkit-transform:translateY(-8px)} }
-@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-#empty-ttl { font-family:‘Playfair Display’,Georgia,serif; font-style:italic; font-size:20px; color:#c8a0b8; margin-bottom:8px; }
-#empty-sub { font-size:13px; color:#c8a0b8; line-height:1.75; }
 
-/* ── SEL BAR ── */
-#selbar {
-position: fixed;
-left: 50%; bottom: 28px;
--webkit-transform: translateX(-50%) translateY(130px);
+/* ── EMPTY ── */
+#empty { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 80px 30px 40px; text-align: center; gap: 12px; }
+.empty-icon { font-size: 54px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+#empty h2 { font-family: ‘Cormorant Garamond’, Georgia, serif; font-style: italic; font-size: 22px; color: var(–mauve); font-weight: 600; }
+#empty p { font-size: 13px; color: var(–mauve); line-height: 1.7; }
+#empty strong { color: var(–rose); }
+
+/* ── SELECTION BAR ── */
+#sel-bar {
+position: fixed; bottom: calc(22px + var(–safe-b)); left: 50%;
 transform: translateX(-50%) translateY(130px);
-background: white; border: 1.5px solid #f0d6e4; border-radius: 32px;
-padding: 8px 10px;
-display: -webkit-flex; display: flex;
-gap: 6px; -webkit-align-items: center; align-items: center;
-box-shadow: 0 8px 30px rgba(200,140,180,0.28); z-index: 50; white-space: nowrap;
--webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+background: var(–white); border: 1.5px solid var(–border);
+border-radius: 30px; padding: 8px 10px;
+display: flex; gap: 6px; align-items: center;
+box-shadow: 0 8px 32px rgba(140,80,100,0.22);
+z-index: 200; white-space: nowrap;
 transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
-#selbar.up {
--webkit-transform: translateX(-50%) translateY(0);
-transform: translateX(-50%) translateY(0);
-}
-.sab {
-border-radius: 22px; padding: 8px 14px;
-font-family:‘DM Sans’,Arial,sans-serif; font-size:13px; font-weight:500;
-border: 1.5px solid #f0d6e4; background: #fdf0f5; color: #4a3040;
+#sel-bar.visible { transform: translateX(-50%) translateY(0); }
+.sel-btn {
+border-radius: 20px; padding: 7px 14px;
+font-family: ‘DM Sans’, sans-serif; font-size: 13px; font-weight: 500;
+border: 1.5px solid var(–border); background: var(–card); color: var(–text);
 cursor: pointer; -webkit-appearance: none;
-display: -webkit-inline-flex; display: inline-flex;
--webkit-align-items: center; align-items: center; gap: 4px;
+display: inline-flex; align-items: center; gap: 4px;
 }
-.sab:active { opacity: 0.7; }
-.sab.danger { color:#d46080; border-color:#f0c0d0; background:#fff5f7; }
-.sab.soft { color:#a8849a; }
+.sel-btn:active { opacity: 0.7; }
+.sel-btn.danger { color: #c04060; border-color: #f0b8c0; background: #fff5f7; }
+.sel-btn.ghost  { color: var(–muted); }
 
 /* ── LIGHTBOX ── */
-#lb {
-position: fixed; top:0; left:0; right:0; bottom:0;
-background: rgba(253,240,245,0.97);
-z-index: 200; display: none;
--webkit-flex-direction: column; flex-direction: column;
--webkit-align-items: center; align-items: center;
+#lightbox {
+position: fixed; inset: 0;
+background: rgba(253,246,240,0.97);
+z-index: 300; display: none;
+flex-direction: column; align-items: center;
 }
-#lb.open { display: -webkit-flex; display: flex; }
-#lbhd {
-width:100%; flex-shrink:0;
-display: -webkit-flex; display: flex;
--webkit-align-items:center; align-items:center;
--webkit-justify-content:space-between; justify-content:space-between;
-padding: 54px 16px 10px;
+#lightbox.open { display: flex; }
+#lb-hdr {
+width: 100%; display: flex; align-items: center;
+justify-content: space-between;
+padding: calc(var(–safe-t) + 8px) 16px 8px; flex-shrink: 0;
 }
-#lbclose {
-width:38px; height:38px; border-radius:19px;
-background:#fff; border:1.5px solid #f0d6e4; color:#a8849a; font-size:17px;
-cursor:pointer;
-display:-webkit-flex;display:flex;
--webkit-align-items:center;align-items:center;
--webkit-justify-content:center;justify-content:center;
--webkit-appearance:none;
+#lb-close {
+width: 36px; height: 36px; border-radius: 50%;
+background: var(–white); border: 1.5px solid var(–border);
+color: var(–muted); font-size: 16px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; -webkit-appearance: none;
 }
-#lbclose:active{background:#f0d6e4}
-#lbtag{font-family:‘Playfair Display’,Georgia,serif;font-style:italic;font-size:13px;color:#a8849a}
-#lbimg-wrap {
-flex:1;width:100%;
-display:-webkit-flex;display:flex;
--webkit-align-items:center;align-items:center;
--webkit-justify-content:center;justify-content:center;
-padding:0 14px;overflow:hidden;
+#lb-close:active { background: var(–border); }
+#lb-tag { font-family: ‘Cormorant Garamond’, serif; font-style: italic; font-size: 13px; color: var(–mauve); }
+#lb-img-wrap {
+flex: 1; width: 100%;
+display: flex; align-items: center; justify-content: center;
+padding: 0 16px; overflow: hidden;
 }
-#lbimg-wrap img {
-max-width:100%;max-height:100%;object-fit:contain;
-border-radius:14px;box-shadow:0 8px 40px rgba(200,140,180,0.22);
--webkit-user-select:auto;user-select:auto;pointer-events:auto;
+#lb-img-wrap img {
+max-width: 100%; max-height: 100%; object-fit: contain;
+border-radius: 14px; box-shadow: 0 8px 40px rgba(140,80,100,0.18);
+-webkit-user-select: auto; user-select: auto; pointer-events: auto;
 }
-#lbhint{font-size:11px;color:#c8a0b8;text-align:center;padding:8px 20px 4px;font-style:italic;font-family:‘Playfair Display’,Georgia,serif;flex-shrink:0}
-#lbbtns{
-display:-webkit-flex;display:flex;
-gap:10px;padding:10px 18px 34px;width:100%;
--webkit-justify-content:center;justify-content:center;
-flex-shrink:0;
+#lb-hint { font-family: ‘Cormorant Garamond’, serif; font-style: italic; font-size: 11px; color: var(–mauve); padding: 6px 20px 4px; text-align: center; flex-shrink: 0; }
+#lb-btns { display: flex; gap: 10px; padding: 8px 18px calc(28px + var(–safe-b)); width: 100%; justify-content: center; flex-shrink: 0; }
+.lb-btn {
+flex: 1; max-width: 140px;
+background: var(–white); border: 1.5px solid var(–border);
+border-radius: 14px; padding: 12px 8px; color: var(–text);
+font-family: ‘DM Sans’, sans-serif; font-size: 13px; font-weight: 500;
+cursor: pointer; text-align: center;
+display: flex; align-items: center; justify-content: center; gap: 5px;
+-webkit-appearance: none;
 }
-.lbb {
-flex:1;max-width:150px;
-background:#fff;border:1.5px solid #f0d6e4;border-radius:16px;
-padding:13px 10px;color:#4a3040;
-font-family:‘DM Sans’,Arial,sans-serif;font-size:13px;font-weight:500;
-cursor:pointer;text-align:center;
-display:-webkit-flex;display:flex;
--webkit-align-items:center;align-items:center;
--webkit-justify-content:center;justify-content:center;
-gap:5px;-webkit-appearance:none;
-}
-.lbb:active{opacity:0.7}
-.lbb.pk{background:-webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);background:linear-gradient(135deg,#f4a7c3,#e07fa8);color:white;border:none;box-shadow:0 4px 16px rgba(224,127,168,0.4)}
-.lbb.rd{color:#d46080;border-color:#f0c0d0;background:#fff5f7}
+.lb-btn:active { opacity: 0.7; }
+.lb-btn.pk { background: linear-gradient(135deg, var(–blush), var(–rose)); color: white; border: none; box-shadow: 0 4px 14px rgba(212,120,138,0.38); }
+.lb-btn.rd { color: #c04060; border-color: #f0b8c0; background: #fff5f7; }
 
-/* ── MODAL ── */
-#mbg {
-position:fixed;top:0;left:0;right:0;bottom:0;
-background:rgba(74,48,64,0.35);z-index:300;
-opacity:0;pointer-events:none;
--webkit-transition:opacity 0.2s;transition:opacity 0.2s;
-display:-webkit-flex;display:flex;
--webkit-align-items:flex-end;align-items:flex-end;
+/* ── BOTTOM SHEET ── */
+#sheet-bg {
+position: fixed; inset: 0;
+background: rgba(61,32,48,0.35);
+z-index: 400; opacity: 0; pointer-events: none;
+transition: opacity 0.22s;
+display: flex; align-items: flex-end;
 }
-#mbg.open{opacity:1;pointer-events:all}
-#mbox {
-background:#fff;border-radius:24px 24px 0 0;width:100%;
-padding:6px 18px 36px;border-top:1.5px solid #f0d6e4;
--webkit-transform:translateY(100%);transform:translateY(100%);
--webkit-transition:-webkit-transform 0.28s cubic-bezier(0.32,0.72,0,1);
-transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);
+#sheet-bg.open { opacity: 1; pointer-events: all; }
+#sheet {
+background: var(–white); border-radius: 24px 24px 0 0;
+border-top: 1.5px solid var(–border);
+width: 100%; padding: 0 18px calc(28px + var(–safe-b));
+transform: translateY(100%);
+transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
+max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
-#mbg.open #mbox{-webkit-transform:translateY(0);transform:translateY(0)}
-#mpill{width:36px;height:4px;background:#f0d6e4;border-radius:2px;margin:10px auto 14px}
-#mtitle{font-family:‘Playfair Display’,Georgia,serif;font-weight:700;font-style:italic;font-size:19px;color:#e07fa8;margin-bottom:14px;text-align:center}
-#mbody input{
-width:100%;background:#fdf0f5;border:1.5px solid #f0d6e4;border-radius:13px;
-padding:13px 15px;color:#4a3040;font-family:‘DM Sans’,Arial,sans-serif;font-size:15px;
-outline:none;margin-bottom:11px;-webkit-appearance:none;display:block;
--webkit-box-sizing:border-box;box-sizing:border-box;
+#sheet-bg.open #sheet { transform: translateY(0); }
+.sheet-pill { width: 36px; height: 4px; background: var(–border); border-radius: 2px; margin: 12px auto 16px; }
+.sheet-title { font-family: ‘Cormorant Garamond’, Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; color: var(–rose); text-align: center; margin-bottom: 16px; }
+.sheet-input { width: 100%; background: var(–cream); border: 1.5px solid var(–border); border-radius: 12px; padding: 12px 14px; color: var(–text); font-family: ‘DM Sans’, sans-serif; font-size: 15px; outline: none; margin-bottom: 10px; -webkit-appearance: none; display: block; }
+.sheet-input:focus { border-color: var(–blush); }
+.sheet-btn { width: 100%; padding: 13px; border-radius: 14px; border: none; font-family: ‘DM Sans’, sans-serif; font-weight: 500; font-size: 15px; cursor: pointer; margin-bottom: 8px; -webkit-appearance: none; display: block; text-align: center; }
+.sheet-btn:active { opacity: 0.8; }
+.sheet-btn.pk { background: linear-gradient(135deg, var(–blush), var(–rose)); color: white; box-shadow: 0 4px 14px rgba(212,120,138,0.28); }
+.sheet-btn.gy { background: var(–cream); color: var(–muted); border: 1.5px solid var(–border); }
+.sheet-btn.rd { background: #fff0f2; color: #c04060; border: 1.5px solid #f0b8c0; }
+.f-opt { display: flex; align-items: center; gap: 10px; background: var(–cream); border: 1.5px solid var(–border); border-radius: 12px; padding: 12px 14px; cursor: pointer; font-size: 14px; font-family: ‘DM Sans’, sans-serif; margin-bottom: 7px; }
+.f-opt:active { border-color: var(–blush); background: #fff5f8; }
+.f-list { max-height: 220px; overflow-y: auto; margin-bottom: 10px; -webkit-overflow-scrolling: touch; }
+
+/* ── SORT POPOVER ── */
+#sort-pop {
+position: fixed; inset: 0; z-index: 500; display: none;
 }
-#mbody input:focus{border-color:#f4a7c3}
-.mb{
-width:100%;padding:14px;border-radius:14px;border:none;
-cursor:pointer;font-family:‘DM Sans’,Arial,sans-serif;font-weight:500;font-size:15px;
-margin-bottom:7px;-webkit-appearance:none;display:block;text-align:center;
--webkit-box-sizing:border-box;box-sizing:border-box;
+#sort-pop.open { display: block; }
+#sort-pop-bg { position: absolute; inset: 0; }
+#sort-pop-box {
+position: absolute; top: 110px; right: 14px;
+background: var(–white); border: 1.5px solid var(–border);
+border-radius: 16px; padding: 6px;
+box-shadow: 0 8px 30px rgba(140,80,100,0.18);
+min-width: 175px; z-index: 501;
 }
-.mb:active{opacity:0.8}
-.mb.pk{background:-webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);background:linear-gradient(135deg,#f4a7c3,#e07fa8);color:white;box-shadow:0 4px 14px rgba(224,127,168,0.32)}
-.mb.gy{background:#fdf0f5;color:#a8849a;border:1.5px solid #f0d6e4}
-.mb.rd{background:#fff0f3;color:#d46080;border:1.5px solid #f0c0d0}
-.fo{
-display:-webkit-flex;display:flex;
--webkit-align-items:center;align-items:center;
-gap:10px;background:#fdf0f5;border:1.5px solid #f0d6e4;border-radius:13px;
-padding:12px 14px;cursor:pointer;font-size:14px;font-family:‘DM Sans’,Arial,sans-serif;
-margin-bottom:7px;
+.sort-opt {
+display: flex; align-items: center; gap: 9px;
+padding: 10px 14px; border-radius: 10px; cursor: pointer;
+font-family: ‘DM Sans’, sans-serif; font-size: 13px; color: var(–text);
 }
-.fo:active{border-color:#f4a7c3;background:#fff5f8}
-.fl{max-height:230px;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-bottom:10px}
+.sort-opt:active { background: var(–cream); }
+.sort-opt.on { color: var(–rose); font-weight: 500; }
+.sort-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(–border); flex-shrink: 0; }
+.sort-opt.on .sort-dot { background: var(–rose); border-color: var(–rose); }
 
 /* ── TOAST ── */
-#toast{
-position:fixed;top:72px;left:50%;
--webkit-transform:translateX(-50%) translateY(-8px);
-transform:translateX(-50%) translateY(-8px);
-background:white;border:1.5px solid #f0d6e4;border-radius:28px;
-padding:9px 20px;font-size:13px;font-family:‘DM Sans’,Arial,sans-serif;color:#4a3040;
-box-shadow:0 4px 20px rgba(200,140,180,0.22);
-opacity:0;-webkit-transition:opacity 0.2s,-webkit-transform 0.2s;transition:opacity 0.2s,transform 0.2s;
-pointer-events:none;z-index:999;white-space:nowrap;
-}
-#toast.show{opacity:1;-webkit-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0)}
+#toast { position: fixed; top: calc(var(–safe-t) + 58px); left: 50%; transform: translateX(-50%) translateY(-6px); background: var(–white); border: 1.5px solid var(–border); border-radius: 24px; padding: 8px 20px; font-family: ‘DM Sans’, sans-serif; font-size: 13px; color: var(–text); box-shadow: 0 4px 20px rgba(140,80,100,0.18); opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; white-space: nowrap; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Hidden real file input — NOT inside a label */
-#upload-input { display:none; }
+/* File input — standalone in body, never inside a label */
+#file-input { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
 </style>
 
 </head>
 <body>
 
-<div id="dotbg"></div>
-<div id="b1"></div>
-<div id="b2"></div>
+<!-- CRITICAL: file input is a bare child of body, NOT inside any label -->
 
-<!-- HEADER -->
+<input type="file" id="file-input" accept="image/*,image/gif" multiple>
 
-<div id="header">
-  <div id="header-inner">
-    <div id="logo-wrap">
-      <span id="logo-flower">🌸</span>
-      <span id="logo-text">Meme Box</span>
-    </div>
-    <div id="btns">
-      <!-- Select toggle -->
-      <button class="hbtn" id="selbtn" onclick="toggleSel()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </button>
-      <!-- Upload button — real button, triggers input via JS -->
-      <button class="hbtn" id="upbtn" onclick="triggerUpload()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      </button>
+<div id="app">
+
+  <div id="header">
+    <div id="header-inner">
+      <div id="wordmark">🌸 Petal</div>
+      <div id="hdr-btns">
+        <button class="icon-btn lit" id="sel-toggle" title="Select">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="icon-btn" id="add-btn" title="Add images">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
     </div>
   </div>
+
+  <div id="folder-strip"><!-- JS renders --></div>
+
+  <div id="toolbar">
+    <span id="count-label"></span>
+    <button id="sort-btn" onclick="openSortPop()">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
+      <span id="sort-label">Newest</span>
+    </button>
+  </div>
+
+  <div id="grid-wrap">
+    <div id="grid"></div>
+    <div id="empty">
+      <div class="empty-icon">🌷</div>
+      <h2>nothing here yet~</h2>
+      <p>tap <strong>+</strong> to add memes<br>from your camera roll</p>
+    </div>
+  </div>
+
 </div>
 
-<!-- File input lives directly in body, not in a label -->
+<!-- SELECTION BAR -->
 
-<input type="file" id="upload-input" accept="image/*" multiple>
-
-<!-- FOLDER STRIP -->
-
-<div id="folder-strip"></div>
-
-<!-- COUNT -->
-
-<div id="count-row"></div>
-
-<!-- SCROLL AREA -->
-
-<div id="scroll-box">
-  <div id="grid"></div>
-</div>
-
-<!-- SEL BAR -->
-
-<div id="selbar">
-  <button class="sab" onclick="doMove()">📂 Move</button>
-  <button class="sab danger" onclick="doDelete()">🗑 Delete</button>
-  <button class="sab soft" onclick="exitSel()">✕ Done</button>
+<div id="sel-bar">
+  <button class="sel-btn" onclick="moveSelected()">📂 Move</button>
+  <button class="sel-btn danger" onclick="deleteSelected()">🗑 Delete</button>
+  <button class="sel-btn ghost" onclick="exitSelectMode()">✕ Done</button>
 </div>
 
 <!-- LIGHTBOX -->
 
-<div id="lb">
-  <div id="lbhd">
-    <button id="lbclose" onclick="closeLB()">✕</button>
-    <div id="lbtag"></div>
-    <div style="width:38px"></div>
+<div id="lightbox">
+  <div id="lb-hdr">
+    <button id="lb-close" onclick="closeLB()">✕</button>
+    <div id="lb-tag"></div>
+    <div style="width:36px"></div>
   </div>
-  <div id="lbimg-wrap"><img id="lbimg" src="" alt=""></div>
-  <div id="lbhint">✦ hold image to save or copy</div>
-  <div id="lbbtns">
-    <button class="lbb pk" onclick="doShare()">↑ Share</button>
-    <button class="lbb" onclick="doLBMove()">📂 Move</button>
-    <button class="lbb rd" onclick="doLBDel()">🗑 Delete</button>
+  <div id="lb-img-wrap"><img id="lb-img" src="" alt=""></div>
+  <div id="lb-hint">✦ hold image to save or copy</div>
+  <div id="lb-btns">
+    <button class="lb-btn pk" onclick="shareMedia()">↑ Share</button>
+    <button class="lb-btn" onclick="moveLB()">📂 Move</button>
+    <button class="lb-btn rd" onclick="deleteLB()">🗑 Delete</button>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- BOTTOM SHEET -->
 
-<div id="mbg" onclick="bgTap(event)">
-  <div id="mbox">
-    <div id="mpill"></div>
-    <div id="mtitle"></div>
-    <div id="mbody"></div>
+<div id="sheet-bg" onclick="sheetBgTap(event)">
+  <div id="sheet">
+    <div class="sheet-pill"></div>
+    <div id="sheet-title" class="sheet-title"></div>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<!-- SORT POPOVER -->
+
+<div id="sort-pop">
+  <div id="sort-pop-bg" onclick="closeSortPop()"></div>
+  <div id="sort-pop-box">
+    <div class="sort-opt on" data-s="newest" onclick="setSort('newest')"><span class="sort-dot"></span>Newest first</div>
+    <div class="sort-opt"    data-s="oldest" onclick="setSort('oldest')"><span class="sort-dot"></span>Oldest first</div>
+    <div class="sort-opt"    data-s="az"     onclick="setSort('az')"><span class="sort-dot"></span>A → Z (folder)</div>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ─── GLOBALS ─────────────────────────────────────────────────────────
-var _db = null;
-var _folders = [];
-var _memes = [];
-var _curF = 'all';
-var _inSel = false;
-var _picked = {};
-var _lbId = null;
-var _toastT = null;
+'use strict';
 
-// ─── LAYOUT ──────────────────────────────────────────────────────────
-// Uses CSS to position panels relative to each other via measured pixel values.
-// Called after every render that might change header/strip height.
-function measureLayout() {
-  var header = document.getElementById('header');
-  var strip  = document.getElementById('folder-strip');
-  var count  = document.getElementById('count-row');
-  var scroll = document.getElementById('scroll-box');
+// ── STATE ─────────────────────────────────────────────────────────────
+var DB = null, folders = [], memes = [];
+var curFolder = 'all', selMode = false, picked = {}, lbId = null;
+var sortKey = 'newest', toastT = null;
 
-  if (!header || !strip || !count || !scroll) return;
+// ── BOOT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
 
-  var hh = header.offsetHeight;
-  var sh = strip.offsetHeight;
-  var ch = count.offsetHeight;
+  // ADD BUTTON: synchronous click → input.click() preserves iOS gesture trust
+  document.getElementById('add-btn').addEventListener('click', function() {
+    var inp = document.getElementById('file-input');
+    inp.value = '';   // allow re-selecting same file
+    inp.click();      // must be synchronous from user gesture — no setTimeout/Promise
+  });
 
-  strip.style.top  = hh + 'px';
-  count.style.top  = (hh + sh) + 'px';
-  scroll.style.top = (hh + sh + ch) + 'px';
-}
+  document.getElementById('sel-toggle').addEventListener('click', toggleSelMode);
+  document.getElementById('file-input').addEventListener('change', onFilesChosen);
 
-// ─── DB ──────────────────────────────────────────────────────────────
+  openDB()
+    .then(function() { return dbAll('folders'); })
+    .then(function(rows) {
+      folders = rows || [];
+      renderStrip();
+      return loadGrid();
+    })
+    .catch(function(e) {
+      console.warn('boot', e);
+      renderStrip();
+      showEmpty();
+    });
+});
+
+// ── INDEXEDDB ─────────────────────────────────────────────────────────
 function openDB() {
   return new Promise(function(ok, no) {
-    var r = indexedDB.open('mbx5', 1);
+    var r = indexedDB.open('petal2', 1);
     r.onupgradeneeded = function(e) {
-      var d = e.target.result;
-      if (!d.objectStoreNames.contains('memes')) {
-        var s = d.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains('memes')) {
+        var s = db.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
         s.createIndex('folder', 'folder', { unique: false });
       }
-      if (!d.objectStoreNames.contains('folders')) {
-        d.createObjectStore('folders', { keyPath: 'name' });
-      }
+      if (!db.objectStoreNames.contains('folders'))
+        db.createObjectStore('folders', { keyPath: 'name' });
     };
-    r.onsuccess  = function(e) { _db = e.target.result; ok(); };
-    r.onerror    = function()  { no(r.error); };
-    r.onblocked  = function()  { no(new Error('blocked')); };
-  });
-}
-
-function dbGet(store, key) {
-  return new Promise(function(ok, no) {
-    var r = _db.transaction(store).objectStore(store).get(key);
-    r.onsuccess = function() { ok(r.result); };
-    r.onerror   = function() { no(r.error); };
+    r.onsuccess = function(e) { DB = e.target.result; ok(); };
+    r.onerror   = function()  { no(r.error); };
+    r.onblocked = function()  { no(new Error('blocked')); };
   });
 }
 function dbAll(store, idx, val) {
   return new Promise(function(ok, no) {
-    var os = _db.transaction(store).objectStore(store);
-    var r  = (idx && val !== undefined) ? os.index(idx).getAll(val) : os.getAll();
+    var os = DB.transaction(store).objectStore(store);
+    var r  = (idx != null) ? os.index(idx).getAll(val) : os.getAll();
     r.onsuccess = function() { ok(r.result || []); };
+    r.onerror   = function() { no(r.error); };
+  });
+}
+function dbGet(store, key) {
+  return new Promise(function(ok, no) {
+    var r = DB.transaction(store).objectStore(store).get(key);
+    r.onsuccess = function() { ok(r.result); };
     r.onerror   = function() { no(r.error); };
   });
 }
 function dbPut(store, obj) {
   return new Promise(function(ok, no) {
-    var r = _db.transaction(store, 'readwrite').objectStore(store).put(obj);
+    var r = DB.transaction(store, 'readwrite').objectStore(store).put(obj);
     r.onsuccess = function() { ok(r.result); };
     r.onerror   = function() { no(r.error); };
   });
 }
 function dbDel(store, key) {
   return new Promise(function(ok, no) {
-    var r = _db.transaction(store, 'readwrite').objectStore(store).delete(key);
+    var r = DB.transaction(store, 'readwrite').objectStore(store).delete(key);
     r.onsuccess = function() { ok(); };
     r.onerror   = function() { no(r.error); };
   });
 }
 function dbCount(store, idx, val) {
   return new Promise(function(ok, no) {
-    var os = _db.transaction(store).objectStore(store);
-    var r  = (idx && val !== undefined) ? os.index(idx).count(val) : os.count();
+    var os = DB.transaction(store).objectStore(store);
+    var r  = (idx != null) ? os.index(idx).count(val) : os.count();
     r.onsuccess = function() { ok(r.result); };
     r.onerror   = function() { no(r.error); };
   });
 }
 
-// ─── BOOT ────────────────────────────────────────────────────────────
-function boot() {
-  // Initial layout pass (before DB loads)
-  measureLayout();
-  paintStrip();
-  paintEmpty();
-
-  openDB().then(function() {
-    return dbAll('folders');
-  }).then(function(rows) {
-    _folders = rows || [];
-    paintStrip();
-    return loadGrid();
-  }).catch(function(err) {
-    console.warn('boot err', err);
-    paintStrip();
-    paintEmpty();
-  });
-}
-
-// ─── UPLOAD — fixed for Safari iOS ───────────────────────────────────
-// Trigger via button click so the gesture chain is intact for iOS file picker
-function triggerUpload() {
-  var inp = document.getElementById('upload-input');
-  inp.value = ''; // reset so same file can be re-selected
-  inp.click();
-}
-
-document.getElementById('upload-input').addEventListener('change', function(e) {
+// ── FILE PROCESSING ───────────────────────────────────────────────────
+function onFilesChosen(e) {
   var files = e.target.files;
   if (!files || !files.length) return;
-
-  // Snapshot files array immediately (it becomes empty after async gap in some browsers)
-  var list = [];
-  for (var i = 0; i < files.length; i++) list.push(files[i]);
-
-  showToast('⏳ Saving ' + list.length + (list.length !== 1 ? ' images…' : ' image…'));
-
-  var saved = 0;
-  var idx = 0;
-
+  var list = Array.prototype.slice.call(files);
+  e.target.value = '';
+  showToast('⏳ Saving…');
+  var saved = 0, i = 0;
   function next() {
-    if (idx >= list.length) {
-      e.target.value = '';
-      showToast('🌸 Added ' + saved + (saved !== 1 ? ' memes' : ' meme'));
+    if (i >= list.length) {
+      showToast('🌸 Added ' + saved);
       loadGrid();
       return;
     }
-
-    var file = list[idx];
-    idx++;
-
-    // Canvas-based resize/compress: avoids large base64 blobs that can
-    // silently fail to persist in IndexedDB on iOS when images are >2-3 MB
-    compressImage(file, 1200, 0.82).then(function(dataUrl) {
-      var folder = (_curF === 'all') ? '' : _curF;
-      return dbPut('memes', { dataUrl: dataUrl, folder: folder, added: Date.now() });
-    }).then(function() {
-      saved++;
-      next();
-    }).catch(function(err) {
-      console.warn('save err', err);
-      next(); // skip bad file, keep going
-    });
+    var f = list[i++];
+    var isGif = f.type === 'image/gif';
+    processImage(f, isGif)
+      .then(function(url) {
+        return dbPut('memes', {
+          dataUrl: url,
+          folder:  curFolder === 'all' ? '' : curFolder,
+          added:   Date.now(),
+          isGif:   isGif
+        });
+      })
+      .then(function() { saved++; next(); })
+      .catch(function(err) { console.warn('skip', err); next(); });
   }
-
   next();
-});
+}
 
-// Compress image via canvas — solves iOS large-file IndexedDB failures
-function compressImage(file, maxPx, quality) {
-  return new Promise(function(resolve, reject) {
+function processImage(file, isGif) {
+  return new Promise(function(ok, no) {
     var reader = new FileReader();
-    reader.onerror = reject;
+    reader.onerror = no;
     reader.onload = function(ev) {
-      var img = new Image();
-      img.onerror = reject;
+      var raw = ev.target.result;
+      if (isGif) { ok(raw); return; }  // preserve GIF animation, don't canvas-encode
+      var img = new window.Image();
+      img.onerror = no;
       img.onload = function() {
-        var w = img.naturalWidth;
-        var h = img.naturalHeight;
-
-        // Downscale if needed
-        if (w > maxPx || h > maxPx) {
-          if (w >= h) { h = Math.round(h * maxPx / w); w = maxPx; }
-          else        { w = Math.round(w * maxPx / h); h = maxPx; }
+        var W = img.naturalWidth, H = img.naturalHeight, MAX = 1080;
+        if (W > MAX || H > MAX) {
+          if (W >= H) { H = Math.round(H * MAX / W); W = MAX; }
+          else        { W = Math.round(W * MAX / H); H = MAX; }
         }
-
-        var canvas = document.createElement('canvas');
-        canvas.width  = w;
-        canvas.height = h;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-
-        // Use jpeg for photos (smaller), png for anything with alpha
-        var mime = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
-        var q    = (mime === 'image/jpeg') ? quality : undefined;
-
         try {
-          var dataUrl = canvas.toDataURL(mime, q);
-          resolve(dataUrl);
-        } catch(e) {
-          reject(e);
-        }
+          var c = document.createElement('canvas');
+          c.width = W; c.height = H;
+          c.getContext('2d').drawImage(img, 0, 0, W, H);
+          var mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          ok(c.toDataURL(mime, mime === 'image/jpeg' ? 0.82 : undefined));
+        } catch(err) { no(err); }
       };
-      img.src = ev.target.result;
+      img.src = raw;
     };
     reader.readAsDataURL(file);
   });
 }
 
-// ─── FOLDER STRIP ────────────────────────────────────────────────────
-function paintStrip() {
+// ── FOLDER STRIP ──────────────────────────────────────────────────────
+function renderStrip() {
   var strip = document.getElementById('folder-strip');
   strip.innerHTML = '';
 
-  var a = document.createElement('span');
-  a.className = 'fc' + (_curF === 'all' ? ' on' : '');
-  a.innerHTML = '🌸 All <span class="cc" id="cc-all">0</span>';
-  a.onclick = function() { switchF('all'); };
-  strip.appendChild(a);
+  strip.appendChild(makeChip('🌸 All', 'all'));
 
-  for (var i = 0; i < _folders.length; i++) {
-    (function(f) {
-      var c = document.createElement('span');
-      c.className = 'fc' + (_curF === f.name ? ' on' : '');
-      c.innerHTML = '📂 ' + f.name + ' <span class="cc" id="cc-' + f.name + '">0</span>';
-      c.onclick = function() { switchF(f.name); };
-      var pt;
-      c.addEventListener('touchstart', function() {
-        pt = setTimeout(function() { showFolderOpts(f.name); }, 600);
-      }, { passive: true });
-      c.addEventListener('touchend',  function() { clearTimeout(pt); });
-      c.addEventListener('touchmove', function() { clearTimeout(pt); });
-      strip.appendChild(c);
-    })(_folders[i]);
-  }
+  folders.forEach(function(f) {
+    var chip = makeChip('📂 ' + f.name, f.name);
+    var pt;
+    chip.addEventListener('touchstart', function() {
+      pt = setTimeout(function() { showFolderOpts(f.name); }, 600);
+    }, { passive: true });
+    chip.addEventListener('touchend',  function() { clearTimeout(pt); });
+    chip.addEventListener('touchmove', function() { clearTimeout(pt); });
+    strip.appendChild(chip);
+  });
 
   var nb = document.createElement('button');
-  nb.className  = 'nfb';
+  nb.className   = 'new-folder-btn';
   nb.textContent = '✦ New Folder';
-  nb.onclick    = showNewFolderModal;
+  nb.addEventListener('click', showNewFolderSheet);
   strip.appendChild(nb);
 
-  // Re-measure after strip paints (content height may change)
-  requestAnimationFrame(function() {
-    measureLayout();
-    refreshCounts();
+  refreshBadges();
+}
+
+function makeChip(label, name) {
+  var c = document.createElement('span');
+  c.className = 'chip' + (curFolder === name ? ' active' : '');
+  c.innerHTML = label + ' <span class="badge" id="b-' + safeId(name) + '">0</span>';
+  c.addEventListener('click', function() { switchFolder(name); });
+  return c;
+}
+
+function refreshBadges() {
+  if (!DB) return;
+  dbCount('memes').then(function(n) {
+    var el = document.getElementById('b-all'); if (el) el.textContent = n;
+  }).catch(function(){});
+  folders.forEach(function(f) {
+    dbCount('memes', 'folder', f.name).then(function(n) {
+      var el = document.getElementById('b-' + safeId(f.name)); if (el) el.textContent = n;
+    }).catch(function(){});
   });
 }
 
-function refreshCounts() {
-  if (!_db) return;
-  dbCount('memes').then(function(n) {
-    var el = document.getElementById('cc-all');
-    if (el) el.textContent = n;
-  }).catch(function(){});
-  for (var i = 0; i < _folders.length; i++) {
-    (function(name) {
-      dbCount('memes', 'folder', name).then(function(n) {
-        var el = document.getElementById('cc-' + name);
-        if (el) el.textContent = n;
-      }).catch(function(){});
-    })(_folders[i].name);
-  }
+function safeId(s) { return String(s).replace(/[^a-zA-Z0-9]/g, '_'); }
+
+function switchFolder(name) {
+  curFolder = name; exitSelectMode();
+  renderStrip(); loadGrid();
 }
 
-function switchF(f) {
-  _curF = f; _inSel = false; _picked = {};
-  document.getElementById('selbar').className  = '';
-  document.getElementById('selbtn').className  = 'hbtn';
-  paintStrip();
-  loadGrid();
-}
-
-// ─── GRID ─────────────────────────────────────────────────────────────
+// ── GRID ──────────────────────────────────────────────────────────────
 function loadGrid() {
-  var p = _curF === 'all' ? dbAll('memes') : dbAll('memes', 'folder', _curF);
+  var p = curFolder === 'all' ? dbAll('memes') : dbAll('memes', 'folder', curFolder);
   return p.then(function(rows) {
-    _memes = rows || [];
-    _memes.sort(function(a, b) { return b.id - a.id; });
-    paintGrid();
-  }).catch(function() { paintEmpty(); });
+    memes = rows || [];
+    sortMemes();
+    renderGrid();
+  }).catch(function() { showEmpty(); });
 }
 
-function paintGrid() {
-  var grid = document.getElementById('grid');
-  var cr   = document.getElementById('count-row');
+function sortMemes() {
+  if      (sortKey === 'newest') memes.sort(function(a,b) { return b.id - a.id; });
+  else if (sortKey === 'oldest') memes.sort(function(a,b) { return a.id - b.id; });
+  else if (sortKey === 'az')     memes.sort(function(a,b) { return (a.folder||'').localeCompare(b.folder||'') || b.id - a.id; });
+}
 
-  if (!_memes.length) {
-    cr.textContent = '';
-    paintEmpty();
-    return;
-  }
+function renderGrid() {
+  var grid  = document.getElementById('grid');
+  var empty = document.getElementById('empty');
+  var lbl   = document.getElementById('count-label');
 
-  cr.textContent = _memes.length + ' meme' + (_memes.length !== 1 ? 's' : '') + ' ✦';
+  if (!memes.length) { grid.innerHTML = ''; showEmpty(); return; }
+
+  empty.style.display = 'none';
+  lbl.textContent = memes.length + ' meme' + (memes.length !== 1 ? 's' : '') + ' ✦';
   grid.innerHTML = '';
 
-  for (var i = 0; i < _memes.length; i++) {
-    (function(m) {
-      var card = document.createElement('div');
-      card.className = 'mc' + (_picked[m.id] ? ' sel' : '');
+  memes.forEach(function(m) {
+    var card = document.createElement('div');
+    card.className = 'meme-card' + (picked[m.id] ? ' selected' : '');
 
-      var img = document.createElement('img');
-      img.src     = m.dataUrl;
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      card.appendChild(img);
+    var img = document.createElement('img');
+    img.src = m.dataUrl;
+    if (!m.isGif) { img.loading = 'lazy'; img.decoding = 'async'; }
+    card.appendChild(img);
 
-      var ck = document.createElement('div');
-      ck.className  = 'ck';
-      ck.textContent = '✓';
-      card.appendChild(ck);
+    if (m.isGif) {
+      var badge = document.createElement('div');
+      badge.className = 'gif-badge';
+      badge.textContent = 'GIF';
+      card.appendChild(badge);
+    }
 
-      var pt;
-      card.addEventListener('touchstart', function() {
-        pt = setTimeout(function() {
-          if (!_inSel) enterSel();
-          pickToggle(m.id, card);
-        }, 500);
-      }, { passive: true });
-      card.addEventListener('touchend',  function() { clearTimeout(pt); });
-      card.addEventListener('touchmove', function() { clearTimeout(pt); });
-      card.onclick = function() {
-        if (_inSel) { pickToggle(m.id, card); }
-        else        { openLB(m.id); }
-      };
+    var ck = document.createElement('div');
+    ck.className = 'check'; ck.textContent = '✓';
+    card.appendChild(ck);
 
-      grid.appendChild(card);
-    })(_memes[i]);
-  }
-  refreshCounts();
+    var pt;
+    card.addEventListener('touchstart', function() {
+      pt = setTimeout(function() {
+        if (!selMode) enterSelectMode();
+        togglePick(m.id, card);
+      }, 500);
+    }, { passive: true });
+    card.addEventListener('touchend',  function() { clearTimeout(pt); });
+    card.addEventListener('touchmove', function() { clearTimeout(pt); });
+    card.addEventListener('click', function() {
+      if (selMode) togglePick(m.id, card);
+      else         openLB(m.id);
+    });
+
+    grid.appendChild(card);
+  });
+
+  refreshBadges();
 }
 
-function paintEmpty() {
-  document.getElementById('grid').innerHTML =
-    '<div id="empty-wrap">' +
-    '<span id="empty-ico">🌷</span>' +
-    '<div id="empty-ttl">nothing here yet~</div>' +
-    '<div id="empty-sub">tap <strong style="color:#e07fa8">+</strong> to add memes from your photos</div>' +
-    '</div>';
-  refreshCounts();
+function showEmpty() {
+  document.getElementById('grid').innerHTML = '';
+  document.getElementById('empty').style.display = 'flex';
+  document.getElementById('count-label').textContent = '';
+  refreshBadges();
 }
 
 function getMeme(id) {
-  for (var i = 0; i < _memes.length; i++) if (_memes[i].id === id) return _memes[i];
+  for (var i = 0; i < memes.length; i++) if (memes[i].id === id) return memes[i];
   return null;
 }
 
-// ─── SELECT ──────────────────────────────────────────────────────────
-function toggleSel() { if (_inSel) exitSel(); else enterSel(); }
-function enterSel() {
-  _inSel = true; _picked = {};
-  document.getElementById('selbar').className = 'up';
-  document.getElementById('selbtn').className = 'hbtn lilac';
+// ── SELECT ────────────────────────────────────────────────────────────
+function toggleSelMode() { if (selMode) exitSelectMode(); else enterSelectMode(); }
+function enterSelectMode() {
+  selMode = true; picked = {};
+  document.getElementById('sel-bar').classList.add('visible');
+  document.getElementById('sel-toggle').style.opacity = '0.7';
 }
-function exitSel() {
-  _inSel = false; _picked = {};
-  var cs = document.querySelectorAll('.mc.sel');
-  for (var i = 0; i < cs.length; i++) cs[i].classList.remove('sel');
-  document.getElementById('selbar').className = '';
-  document.getElementById('selbtn').className = 'hbtn';
+function exitSelectMode() {
+  selMode = false; picked = {};
+  document.querySelectorAll('.meme-card.selected').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('sel-bar').classList.remove('visible');
+  document.getElementById('sel-toggle').style.opacity = '';
 }
-function pickToggle(id, card) {
-  if (_picked[id]) { delete _picked[id]; card.classList.remove('sel'); }
-  else             { _picked[id] = true;  card.classList.add('sel'); }
+function togglePick(id, card) {
+  if (picked[id]) { delete picked[id]; card.classList.remove('selected'); }
+  else            { picked[id] = true;  card.classList.add('selected'); }
 }
-function pickedList() {
-  return Object.keys(_picked).map(function(k) { return parseInt(k, 10); });
-}
+function pickedIds() { return Object.keys(picked).map(function(k) { return parseInt(k, 10); }); }
 
-function doDelete() {
-  var ids = pickedList();
-  if (!ids.length) { showToast('Select some memes first'); return; }
+function deleteSelected() {
+  var ids = pickedIds();
+  if (!ids.length) { showToast('Select something first'); return; }
   var i = 0;
-  function nx() {
-    if (i >= ids.length) { showToast('🗑 Deleted ' + ids.length); exitSel(); loadGrid(); return; }
-    dbDel('memes', ids[i]).then(function() { i++; nx(); }).catch(function() { i++; nx(); });
+  function nxt() {
+    if (i >= ids.length) { showToast('🗑 Deleted ' + ids.length); exitSelectMode(); loadGrid(); return; }
+    dbDel('memes', ids[i]).then(function() { i++; nxt(); }).catch(function() { i++; nxt(); });
   }
-  nx();
+  nxt();
 }
-function doMove() {
-  var ids = pickedList();
-  if (!ids.length) { showToast('Select some memes first'); return; }
-  showMoveModal(ids, false);
+function moveSelected() {
+  var ids = pickedIds();
+  if (!ids.length) { showToast('Select something first'); return; }
+  showMoveSheet(ids, false);
 }
 
-// ─── LIGHTBOX ─────────────────────────────────────────────────────────
+// ── LIGHTBOX ──────────────────────────────────────────────────────────
 function openLB(id) {
   var m = getMeme(id); if (!m) return;
-  _lbId = id;
-  document.getElementById('lbimg').src     = m.dataUrl;
-  document.getElementById('lbtag').textContent = m.folder ? '📂 ' + m.folder : '';
-  document.getElementById('lb').className  = 'open';
+  lbId = id;
+  document.getElementById('lb-img').src = m.dataUrl;
+  document.getElementById('lb-tag').textContent = m.folder ? '📂 ' + m.folder : '';
+  document.getElementById('lightbox').classList.add('open');
 }
-function closeLB() { document.getElementById('lb').className = ''; _lbId = null; }
-
-function doShare() {
-  var m = getMeme(_lbId); if (!m) return;
+function closeLB() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lb-img').src = '';
+  lbId = null;
+}
+function shareMedia() {
+  var m = getMeme(lbId); if (!m) return;
   if (navigator.share) {
     try {
-      var blob = urlToBlob(m.dataUrl);
-      var ext  = blob.type === 'image/png' ? '.png' : blob.type === 'image/gif' ? '.gif' : '.jpg';
-      var file = new File([blob], 'meme' + ext, { type: blob.type });
-      var sd   = { files: [file] };
-      if (!navigator.canShare || navigator.canShare(sd)) {
-        navigator.share(sd).catch(function(e) {
-          if (e.name !== 'AbortError') openImgWin(m.dataUrl);
-        });
+      var blob = b64ToBlob(m.dataUrl);
+      var ext  = m.isGif ? '.gif' : (blob.type === 'image/png' ? '.png' : '.jpg');
+      var file = new File([blob], 'petal' + ext, { type: blob.type });
+      var pay  = { files: [file] };
+      if (!navigator.canShare || navigator.canShare(pay)) {
+        navigator.share(pay).catch(function(e) { if (e.name !== 'AbortError') fallbackOpen(m.dataUrl); });
         return;
       }
     } catch(e) {}
   }
-  openImgWin(m.dataUrl);
+  fallbackOpen(m.dataUrl);
 }
-function doLBMove() { if (_lbId) showMoveModal([_lbId], true); }
-function doLBDel() {
-  if (!_lbId) return;
-  var id = _lbId;
-  dbDel('memes', id).then(function() {
-    closeLB(); showToast('🗑 Deleted'); loadGrid();
-  }).catch(function() { showToast('Error'); });
-}
+function fallbackOpen(url) {
+  var w = window.open('', '_blank');
+  if (w) {
+    w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#fdf6f0;display:flex;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:100vh;border-radius:12px}p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c9a0b0;font-family:sans-serif;font-size:14px}</style></head><body><img src="' + url + '"><p>Hold → Save to Photos</p></body></html>');
 
-function openImgWin(url) {
-  var h = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fdf0f5;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:100vh;border-radius:12px}p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c8a0b8;font-family:sans-serif;font-size:14px}</style></head><body><img src="' + url + '"><p>Hold image to Save to Photos</p></body></html>';
+```
+w.document.close();
+showToast('Hold image to save ✦');
+```
 
-var w = window.open(’’, ‘_blank’);
-if (w) { w.document.write(h); w.document.close(); showToast(‘Hold image to Save’); }
-else showToast(‘Allow pop-ups and try again’);
+} else { showToast(‘Allow pop-ups to share’); }
 }
-function urlToBlob(url) {
-var p = url.split(’,’); var mime = p[0].match(/:(.*?);/)[1];
-var raw = atob(p[1]); var buf = new Uint8Array(raw.length);
+function moveLB() { if (lbId) showMoveSheet([lbId], true); }
+function deleteLB() {
+if (!lbId) return;
+var id = lbId;
+dbDel(‘memes’, id).then(function() { closeLB(); showToast(‘🗑 Deleted’); loadGrid(); }).catch(function() { showToast(‘Error’); });
+}
+function b64ToBlob(url) {
+var p = url.split(’,’), mime = p[0].match(/:(.*?);/)[1], raw = atob(p[1]);
+var buf = new Uint8Array(raw.length);
 for (var i = 0; i < raw.length; i++) buf[i] = raw.charCodeAt(i);
 return new Blob([buf], { type: mime });
 }
 
-// ─── MODALS ───────────────────────────────────────────────────────────
-function showModal(title, html) {
-document.getElementById(‘mtitle’).textContent = title;
-document.getElementById(‘mbody’).innerHTML    = html;
-document.getElementById(‘mbg’).className      = ‘open’;
+// ── SHEET ─────────────────────────────────────────────────────────────
+function openSheet(title, html) {
+document.getElementById(‘sheet-title’).textContent = title;
+document.getElementById(‘sheet-body’).innerHTML    = html;
+document.getElementById(‘sheet-bg’).classList.add(‘open’);
 }
-function closeModal() { document.getElementById(‘mbg’).className = ‘’; }
-function bgTap(e) { if (e.target === document.getElementById(‘mbg’)) closeModal(); }
+function closeSheet() { document.getElementById(‘sheet-bg’).classList.remove(‘open’); }
+function sheetBgTap(e) { if (e.target === document.getElementById(‘sheet-bg’)) closeSheet(); }
 
-function showNewFolderModal() {
-showModal(‘New Folder ✦’,
-‘<input id="fi" type="text" placeholder="Folder name…" maxlength="30">’ +
-‘<button class="mb pk" onclick="createFolder()">Create</button>’ +
-‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
-setTimeout(function() { var el = document.getElementById(‘fi’); if (el) el.focus(); }, 100);
+function showNewFolderSheet() {
+openSheet(‘New Folder ✦’,
+‘<input class="sheet-input" id="fi" type="text" placeholder="Folder name…" maxlength="30">’ +
+‘<button class="sheet-btn pk" onclick="createFolder()">Create</button>’ +
+‘<button class="sheet-btn gy" onclick="closeSheet()">Cancel</button>’);
+setTimeout(function() { var el = document.getElementById(‘fi’); if (el) el.focus(); }, 120);
 }
 function createFolder() {
 var el = document.getElementById(‘fi’); if (!el) return;
 var name = el.value.trim();
 if (!name) { showToast(‘Enter a name’); return; }
-for (var i = 0; i < _folders.length; i++) if (_folders[i].name === name) { showToast(‘Already exists’); return; }
+for (var i = 0; i < folders.length; i++) if (folders[i].name === name) { showToast(‘Already exists’); return; }
 dbPut(‘folders’, { name: name }).then(function() {
-_folders.push({ name: name });
-closeModal(); paintStrip(); showToast(‘📂 Created “’ + name + ‘”’);
+folders.push({ name: name });
+closeSheet(); renderStrip(); showToast(‘📂 “’ + name + ‘” created’);
 }).catch(function() { showToast(‘Error saving’); });
 }
 
-function showMoveModal(ids, fromLb) {
-var inner = ‘<div class="fl"><div class="fo" onclick="execMove(' + JSON.stringify(ids) + ',\'\',' + fromLb + ')">🌸 All (no folder)</div>’;
-for (var i = 0; i < _folders.length; i++) {
-inner += ’<div class="fo" onclick="execMove(' + JSON.stringify(ids) + ',\'' + _folders[i].name + '\',' + fromLb + ')">📂 ’ + _folders[i].name + ‘</div>’;
-}
-inner += ‘</div><button class="mb gy" onclick="closeModal()">Cancel</button>’;
-showModal(‘Move to… ✦’, inner);
-}
-function execMove(ids, target, fromLb) {
-var i = 0;
-function nx() {
-if (i >= ids.length) {
-closeModal();
-if (fromLb) closeLB(); else exitSel();
-showToast(’📂 Moved ’ + ids.length);
-loadGrid(); return;
-}
-dbGet(‘memes’, ids[i]).then(function(m) {
-if (m) { m.folder = target; return dbPut(‘memes’, m); }
-}).then(function() { i++; nx(); }).catch(function() { i++; nx(); });
-}
-nx();
-}
-
 function showFolderOpts(name) {
-showModal(’”’ + name + ‘”’,
-‘<button class="mb gy" onclick="closeModal();showRenameModal(\'' + name + '\')">✏️ Rename</button>’ +
-‘<button class="mb rd" onclick="deleteFolder(\'' + name + '\')">🗑 Delete Folder</button>’ +
-‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
+openSheet(’”’ + name + ‘”’,
+‘<button class="sheet-btn gy" onclick="closeSheet();showRenameSheet(\'' + se(name) + '\')">✏️ Rename</button>’ +
+‘<button class="sheet-btn rd" onclick="delFolder(\'' + se(name) + '\')">🗑 Delete Folder</button>’ +
+‘<button class="sheet-btn gy" onclick="closeSheet()">Cancel</button>’);
 }
-function deleteFolder(name) {
+function delFolder(name) {
 dbAll(‘memes’, ‘folder’, name).then(function(rows) {
-rows = rows || [];
-var i = 0;
-function clr() {
+rows = rows || []; var i = 0;
+function step() {
 if (i >= rows.length) return dbDel(‘folders’, name);
-rows[i].folder = ‘’;
-return dbPut(‘memes’, rows[i]).then(function() { i++; return clr(); });
+rows[i].folder = ‘’; return dbPut(‘memes’, rows[i]).then(function() { i++; return step(); });
 }
-return clr();
+return step();
 }).then(function() {
-_folders = _folders.filter(function(f) { return f.name !== name; });
-if (_curF === name) _curF = ‘all’;
-closeModal(); paintStrip(); loadGrid(); showToast(‘🗑 Folder deleted’);
+folders = folders.filter(function(f) { return f.name !== name; });
+if (curFolder === name) curFolder = ‘all’;
+closeSheet(); renderStrip(); loadGrid(); showToast(‘🗑 Folder deleted’);
 }).catch(function() { showToast(‘Error’); });
 }
-function showRenameModal(old) {
-showModal(‘Rename ✦’,
-‘<input id="ri" type="text" value="' + old + '" maxlength="30">’ +
-‘<button class="mb pk" onclick="execRename(\'' + old + '\')">Save</button>’ +
-‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
-setTimeout(function() { var el = document.getElementById(‘ri’); if (el) { el.focus(); el.select(); } }, 100);
+function showRenameSheet(old) {
+openSheet(‘Rename ✦’,
+‘<input class="sheet-input" id="ri" type="text" value="' + se(old) + '" maxlength="30">’ +
+‘<button class="sheet-btn pk" onclick="execRename(\'' + se(old) + '\')">Save</button>’ +
+‘<button class="sheet-btn gy" onclick="closeSheet()">Cancel</button>’);
+setTimeout(function() { var el = document.getElementById(‘ri’); if (el) { el.focus(); el.select(); } }, 120);
 }
 function execRename(old) {
 var el = document.getElementById(‘ri’); if (!el) return;
 var nw = el.value.trim();
-if (!nw || nw === old) { closeModal(); return; }
-for (var i = 0; i < _folders.length; i++) if (_folders[i].name === nw) { showToast(‘Name taken’); return; }
-dbDel(‘folders’, old).then(function() {
-return dbPut(‘folders’, { name: nw });
-}).then(function() {
-return dbAll(‘memes’, ‘folder’, old);
-}).then(function(rows) {
+if (!nw || nw === old) { closeSheet(); return; }
+for (var i = 0; i < folders.length; i++) if (folders[i].name === nw) { showToast(‘Name taken’); return; }
+dbDel(‘folders’, old)
+.then(function() { return dbPut(‘folders’, { name: nw }); })
+.then(function() { return dbAll(‘memes’, ‘folder’, old); })
+.then(function(rows) {
 rows = rows || []; var i = 0;
-function upd() {
+function step() {
 if (i >= rows.length) return Promise.resolve();
-rows[i].folder = nw;
-return dbPut(‘memes’, rows[i]).then(function() { i++; return upd(); });
+rows[i].folder = nw; return dbPut(‘memes’, rows[i]).then(function() { i++; return step(); });
 }
-return upd();
+return step();
 }).then(function() {
-_folders = _folders.filter(function(f) { return f.name !== old; });
-_folders.push({ name: nw });
-if (_curF === old) _curF = nw;
-closeModal(); paintStrip(); loadGrid(); showToast(‘✓ Renamed’);
+folders = folders.filter(function(f) { return f.name !== old; });
+folders.push({ name: nw });
+if (curFolder === old) curFolder = nw;
+closeSheet(); renderStrip(); loadGrid(); showToast(‘✓ Renamed’);
 }).catch(function() { showToast(‘Error’); });
 }
 
-// ─── TOAST ────────────────────────────────────────────────────────────
-function showToast(msg) {
-var t = document.getElementById(‘toast’);
-t.textContent = msg; t.className = ‘show’;
-clearTimeout(_toastT);
-_toastT = setTimeout(function() { t.className = ‘’; }, 2600);
+function showMoveSheet(ids, fromLB) {
+var inner = ‘<div class="f-list">’;
+inner += ‘<div class="f-opt" onclick="execMove(' + JSON.stringify(ids) + ',\'\',' + fromLB + ')">🌸 All (no folder)</div>’;
+folders.forEach(function(f) {
+inner += ’<div class="f-opt" onclick="execMove(' + JSON.stringify(ids) + ',\'' + se(f.name) + '\',' + fromLB + ')">📂 ’ + se(f.name) + ‘</div>’;
+});
+inner += ‘</div><button class="sheet-btn gy" onclick="closeSheet()">Cancel</button>’;
+openSheet(‘Move to… ✦’, inner);
+}
+function execMove(ids, target, fromLB) {
+var i = 0;
+function step() {
+if (i >= ids.length) {
+closeSheet();
+if (fromLB) closeLB(); else exitSelectMode();
+showToast(’📂 Moved ’ + ids.length); loadGrid(); return;
+}
+dbGet(‘memes’, ids[i]).then(function(m) {
+if (m) { m.folder = target; return dbPut(‘memes’, m); }
+}).then(function() { i++; step(); }).catch(function() { i++; step(); });
+}
+step();
 }
 
-// ─── RESIZE ───────────────────────────────────────────────────────────
-window.addEventListener(‘resize’, measureLayout);
-window.addEventListener(‘orientationchange’, function() { setTimeout(measureLayout, 300); });
+// ── SORT ──────────────────────────────────────────────────────────────
+var SORT_LBL = { newest: ‘Newest’, oldest: ‘Oldest’, az: ‘A → Z’ };
+function openSortPop() { document.getElementById(‘sort-pop’).classList.add(‘open’); syncSortDots(); }
+function closeSortPop() { document.getElementById(‘sort-pop’).classList.remove(‘open’); }
+function syncSortDots() {
+document.querySelectorAll(’.sort-opt’).forEach(function(el) {
+var on = el.dataset.s === sortKey;
+el.classList.toggle(‘on’, on);
+el.querySelector(’.sort-dot’).style.background = on ? ‘var(–rose)’ : ‘’;
+el.querySelector(’.sort-dot’).style.borderColor = on ? ‘var(–rose)’ : ‘’;
+});
+}
+function setSort(key) {
+sortKey = key;
+document.getElementById(‘sort-label’).textContent = SORT_LBL[key] || key;
+closeSortPop();
+sortMemes(); renderGrid();
+}
 
-// ─── START ────────────────────────────────────────────────────────────
-window.onload = boot;
+// ── TOAST ─────────────────────────────────────────────────────────────
+function showToast(msg) {
+var el = document.getElementById(‘toast’);
+el.textContent = msg; el.classList.add(‘show’);
+clearTimeout(toastT);
+toastT = setTimeout(function() { el.classList.remove(‘show’); }, 2600);
+}
+
+// ── UTIL ──────────────────────────────────────────────────────────────
+// Safe for inline onclick string interpolation
+function se(s) {
+return String(s).replace(/\/g,’\\’).replace(/’/g,”\’”).replace(/</g,’<’).replace(/>/g,’>’);
+}
 </script>
 
 </body>
