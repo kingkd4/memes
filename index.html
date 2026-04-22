@@ -3,885 +3,481 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Meme Box">
-<meta name="theme-color" content="#fdf0f5">
-<title>Meme Box ✿</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Meme Box</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #fdf0f5;
-  --bg2: #fff5f9;
-  --surface: #ffffff;
-  --border: #f0d6e4;
-  --border2: #e8c4d8;
-  --pink: #f4a7c3;
-  --pink-deep: #e07fa8;
-  --lilac: #c9b8e8;
-  --mint: #b8e4d8;
-  --peach: #f7c9a8;
-  --text: #4a3040;
-  --muted: #a8849a;
-  --light: #c8a0b8;
-  --radius: 18px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 20px);
-}
-
-- {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-  }
-
 html, body {
-height: 100%;
-width: 100%;
-background-color: #fdf0f5;
-color: #4a3040;
-font-family: ‘DM Sans’, sans-serif;
-overflow: hidden;
-position: fixed;
--webkit-font-smoothing: antialiased;
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: #fdf0f5;
+  font-family: 'DM Sans', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
 }
+* { -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-/* Dot background — Safari-safe, no ‘inset’ shorthand */
-body::before {
-content: ‘’;
+/* dot background */
+#dotbg {
 position: fixed;
 top: 0; left: 0; right: 0; bottom: 0;
-background-image: radial-gradient(circle, rgba(232,196,216,0.55) 1.5px, transparent 1.5px);
+background-image: radial-gradient(circle at center, rgba(224,127,168,0.38) 1.5px, transparent 1.5px);
 background-size: 22px 22px;
 pointer-events: none;
 z-index: 0;
 }
-
-.blob1 {
-position: fixed;
-top: -60px;
-right: -60px;
-width: 200px;
-height: 200px;
-background: radial-gradient(circle, rgba(201,184,232,0.28), transparent 70%);
+/* blobs */
+#b1 {
+position: fixed; top: -60px; right: -60px;
+width: 200px; height: 200px;
+background: radial-gradient(circle, rgba(201,184,232,0.28) 0%, transparent 70%);
 border-radius: 50%;
-pointer-events: none;
-z-index: 0;
+pointer-events: none; z-index: 0;
 }
-.blob2 {
-position: fixed;
-bottom: 10%;
-left: -80px;
-width: 240px;
-height: 240px;
-background: radial-gradient(circle, rgba(184,228,216,0.22), transparent 70%);
+#b2 {
+position: fixed; bottom: 8%; left: -80px;
+width: 240px; height: 240px;
+background: radial-gradient(circle, rgba(184,228,216,0.22) 0%, transparent 70%);
 border-radius: 50%;
-pointer-events: none;
-z-index: 0;
+pointer-events: none; z-index: 0;
 }
 
-#app {
-display: -webkit-flex;
-display: flex;
--webkit-flex-direction: column;
-flex-direction: column;
-height: 100%;
-padding-top: env(safe-area-inset-top, 0px);
-position: relative;
-z-index: 1;
-}
-
-/* ── HEADER ── */
-.header {
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: space-between;
-justify-content: space-between;
-padding: 14px 18px 12px;
-background: rgba(253,240,245,0.92);
--webkit-backdrop-filter: blur(16px);
-backdrop-filter: blur(16px);
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-gap: 10px;
+/* SHELL — absolute positioned sections */
+#header {
+position: fixed;
+top: 0; left: 0; right: 0;
+z-index: 20;
+background: rgba(253,240,245,0.96);
 border-bottom: 1.5px solid #f0d6e4;
-position: relative;
-z-index: 10;
+padding: 0 16px 11px 16px;
+padding-top: env(safe-area-inset-top, 44px);
 }
-
-.logo-wrap {
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
+#header-inner {
+display: -webkit-box; display: -webkit-flex; display: flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
+-webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between;
+padding-top: 12px;
+}
+#logo-wrap {
+display: -webkit-box; display: -webkit-flex; display: flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
 gap: 8px;
 }
-
-.logo-flower {
+#logo-flower {
 font-size: 22px;
 display: inline-block;
--webkit-animation: spin-slow 10s linear infinite;
-animation: spin-slow 10s linear infinite;
+-webkit-animation: spin 10s linear infinite;
+animation: spin 10s linear infinite;
 }
-@-webkit-keyframes spin-slow {
-0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg); }
-100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+@-webkit-keyframes spin { 0%{-webkit-transform:rotate(0deg)} 100%{-webkit-transform:rotate(360deg)} }
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+#logo-text {
+font-family: ‘Playfair Display’, Georgia, serif;
+font-weight: 700; font-size: 22px; color: #e07fa8; letter-spacing: -0.3px;
 }
-@keyframes spin-slow {
-0%   { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
+#btns { display: -webkit-box; display: -webkit-flex; display: flex; gap: 8px; }
+.hbtn {
+width: 42px; height: 42px; border-radius: 21px; border: none;
+background: -webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);
+background: linear-gradient(135deg,#f4a7c3,#e07fa8);
+box-shadow: 0 4px 14px rgba(224,127,168,0.45);
+color: white; cursor: pointer;
+display: -webkit-box; display: -webkit-flex; display: flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
+-webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+-webkit-appearance: none; -webkit-tap-highlight-color: transparent;
+-webkit-transition: opacity 0.12s; transition: opacity 0.12s;
+}
+.hbtn:active { opacity: 0.7; }
+.hbtn.lilac {
+background: -webkit-linear-gradient(135deg,#c9b8e8,#a080d0);
+background: linear-gradient(135deg,#c9b8e8,#a080d0);
+box-shadow: 0 4px 14px rgba(160,128,208,0.45);
 }
 
-.logo {
-font-family: ‘Playfair Display’, serif;
-font-weight: 700;
-font-size: 22px;
-color: #e07fa8;
-letter-spacing: -0.3px;
-}
-
-.header-actions {
-display: -webkit-flex;
-display: flex;
-gap: 8px;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-/* Select button — matches + button exactly */
-.select-btn {
-background: -webkit-linear-gradient(135deg, #f4a7c3, #e07fa8);
-background: linear-gradient(135deg, #f4a7c3, #e07fa8);
-border: none;
-color: white;
-width: 40px;
-height: 40px;
-border-radius: 50%;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-cursor: pointer;
-box-shadow: 0 4px 14px rgba(224,127,168,0.4);
--webkit-transition: -webkit-transform 0.12s;
-transition: transform 0.12s;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
--webkit-appearance: none;
-appearance: none;
-}
-.select-btn:active {
--webkit-transform: scale(0.88);
-transform: scale(0.88);
-}
-.select-btn.active {
-background: -webkit-linear-gradient(135deg, #c9b8e8, #a090d0);
-background: linear-gradient(135deg, #c9b8e8, #a090d0);
-box-shadow: 0 4px 14px rgba(160,144,208,0.4);
-}
-.select-btn svg {
-width: 18px;
-height: 18px;
-fill: none;
-stroke: white;
-stroke-width: 2.5;
-stroke-linecap: round;
-stroke-linejoin: round;
-}
-
-.add-btn {
-background: -webkit-linear-gradient(135deg, #f4a7c3, #e07fa8);
-background: linear-gradient(135deg, #f4a7c3, #e07fa8);
-border: none;
-color: white;
-width: 40px;
-height: 40px;
-border-radius: 50%;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-font-size: 22px;
-cursor: pointer;
-box-shadow: 0 4px 14px rgba(224,127,168,0.4);
--webkit-transition: -webkit-transform 0.12s;
-transition: transform 0.12s;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-line-height: 1;
-}
-.add-btn:active {
--webkit-transform: scale(0.88);
-transform: scale(0.88);
-}
-
-#upload-input { display: none; }
-
-/* ── FOLDER BAR ── */
-.folder-bar {
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
-gap: 8px;
-padding: 10px 18px;
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-scrollbar-width: none;
-background: rgba(253,245,249,0.9);
+#folder-strip {
+position: fixed;
+left: 0; right: 0;
+z-index: 19;
+background: rgba(255,245,249,0.96);
 border-bottom: 1px solid #f0d6e4;
-position: relative;
-z-index: 5;
-}
-.folder-bar::-webkit-scrollbar { display: none; }
-
-.folder-chip {
-display: -webkit-inline-flex;
-display: inline-flex;
--webkit-align-items: center;
-align-items: center;
-gap: 5px;
-background: #ffffff;
-border: 1.5px solid #f0d6e4;
-border-radius: 30px;
-padding: 6px 13px 6px 11px;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 12px;
-font-weight: 500;
-color: #a8849a;
+padding: 9px 16px;
+overflow-x: auto; overflow-y: hidden;
 white-space: nowrap;
-cursor: pointer;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
--webkit-transition: all 0.15s;
-transition: all 0.15s;
-box-shadow: 0 1px 4px rgba(240,160,195,0.1);
+-webkit-overflow-scrolling: touch;
+scrollbar-width: none;
 }
-.folder-chip.active {
-background: -webkit-linear-gradient(135deg, #f4a7c3, #c9b8e8);
-background: linear-gradient(135deg, #f4a7c3, #c9b8e8);
-border-color: transparent;
-color: white;
-box-shadow: 0 3px 12px rgba(240,160,195,0.35);
+#folder-strip::-webkit-scrollbar { display: none; }
+
+.fc {
+display: -webkit-inline-box; display: -webkit-inline-flex; display: inline-flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
+gap: 4px;
+background: #ffffff; border: 1.5px solid #f0d6e4; border-radius: 30px;
+padding: 6px 12px 6px 10px;
+font-family: ‘DM Sans’, Arial, sans-serif; font-size: 12px; font-weight: 500; color: #a8849a;
+white-space: nowrap; cursor: pointer; margin-right: 7px; vertical-align: middle;
+-webkit-tap-highlight-color: transparent;
 }
-.folder-chip .chip-count {
-border-radius: 10px;
-padding: 1px 6px;
-font-size: 10px;
+.fc.on {
+background: -webkit-linear-gradient(135deg,#f4a7c3,#c9b8e8);
+background: linear-gradient(135deg,#f4a7c3,#c9b8e8);
+border-color: transparent; color: white;
+box-shadow: 0 3px 10px rgba(240,160,195,0.35);
+}
+.fc .cc {
+display: inline-block; border-radius: 10px; padding: 1px 6px; font-size: 10px;
 background: rgba(255,255,255,0.3);
 }
-.folder-chip:not(.active) .chip-count {
-background: #fdf0f5;
-color: #a8849a;
+.fc:not(.on) .cc { background: #fdf0f5; color: #a8849a; }
+.nfb {
+display: -webkit-inline-box; display: -webkit-inline-flex; display: inline-flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
+background: transparent; border: 1.5px dashed #e8c4d8; border-radius: 30px;
+padding: 6px 13px; color: #c8a0b8;
+font-family: ‘DM Sans’, Arial, sans-serif; font-size: 12px; font-weight: 500;
+cursor: pointer; white-space: nowrap; vertical-align: middle;
+-webkit-appearance: none; -webkit-tap-highlight-color: transparent;
 }
 
-.new-folder-btn {
-background: none;
-border: 1.5px dashed #e8c4d8;
-border-radius: 30px;
-padding: 6px 13px;
-color: #c8a0b8;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 12px;
-font-weight: 500;
-cursor: pointer;
-white-space: nowrap;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
--webkit-transition: all 0.15s;
-transition: all 0.15s;
--webkit-appearance: none;
-appearance: none;
-}
-.new-folder-btn:active {
-border-color: #f4a7c3;
-color: #f4a7c3;
-}
-
-/* ── COUNT ── */
-.count-label {
-font-size: 11px;
-color: #c8a0b8;
-padding: 4px 20px;
-font-style: italic;
-font-family: ‘Playfair Display’, serif;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-/* ── GRID ── */
-.grid-container {
--webkit-flex: 1;
-flex: 1;
-overflow-y: auto;
-overflow-x: hidden;
-padding: 10px 12px 100px;
-scrollbar-width: none;
--webkit-overflow-scrolling: touch;
-}
-.grid-container::-webkit-scrollbar { display: none; }
-
-.grid {
-display: -webkit-flex;
-display: flex;
--webkit-flex-wrap: wrap;
-flex-wrap: wrap;
-gap: 8px;
-}
-
-.meme-card {
-position: relative;
-width: calc(33.333% - 6px);
-border-radius: 14px;
-overflow: hidden;
-background: #ffffff;
-cursor: pointer;
-border: 2.5px solid transparent;
-box-shadow: 0 2px 10px rgba(200,140,180,0.12);
--webkit-transition: -webkit-transform 0.15s, border-color 0.15s;
-transition: transform 0.15s, border-color 0.15s;
-}
-/* aspect ratio fallback for older Safari */
-.meme-card::before {
-content: ‘’;
-display: block;
-padding-top: 100%;
-}
-.meme-card img {
-position: absolute;
-top: 0; left: 0;
-width: 100%;
-height: 100%;
-object-fit: cover;
-display: block;
-}
-.meme-card:active {
--webkit-transform: scale(0.93);
-transform: scale(0.93);
-}
-.meme-card.selected {
-border-color: #e07fa8;
-box-shadow: 0 0 0 3px rgba(224,127,168,0.25);
-}
-.meme-card .sel-badge {
-position: absolute;
-top: 6px;
-right: 6px;
-width: 22px;
-height: 22px;
-border-radius: 50%;
-background: #e07fa8;
-display: none;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-font-size: 12px;
-color: white;
-box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-z-index: 2;
-}
-.meme-card.selected .sel-badge {
-display: -webkit-flex;
-display: flex;
-}
-
-/* ── EMPTY ── */
-.empty {
-display: -webkit-flex;
-display: flex;
--webkit-flex-direction: column;
-flex-direction: column;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-padding: 60px 30px;
-text-align: center;
-gap: 12px;
-width: 100%;
-}
-.empty-flower {
-font-size: 48px;
--webkit-animation: float 3s ease-in-out infinite;
-animation: float 3s ease-in-out infinite;
-}
-@-webkit-keyframes float {
-0%, 100% { -webkit-transform: translateY(0);    transform: translateY(0); }
-50%       { -webkit-transform: translateY(-8px); transform: translateY(-8px); }
-}
-@keyframes float {
-0%, 100% { transform: translateY(0); }
-50%       { transform: translateY(-8px); }
-}
-.empty-title {
-font-family: ‘Playfair Display’, serif;
-font-style: italic;
-font-size: 20px;
-color: #c8a0b8;
-}
-.empty-sub {
-font-size: 13px;
-color: #c8a0b8;
-line-height: 1.7;
-}
-
-/* ── SELECTION BAR ── */
-.sel-bar {
+#count-row {
 position: fixed;
-bottom: 32px;
-left: 50%;
--webkit-transform: translateX(-50%) translateY(140px);
-transform: translateX(-50%) translateY(140px);
-background: white;
-border: 1.5px solid #f0d6e4;
-border-radius: 30px;
+left: 0; right: 0;
+z-index: 18;
+padding: 3px 18px 2px;
+font-style: italic; font-family: ‘Playfair Display’, Georgia, serif;
+font-size: 11px; color: #c8a0b8; line-height: 20px;
+background: rgba(253,240,245,0.5);
+}
+
+#scroll-box {
+position: fixed;
+left: 0; right: 0; bottom: 0;
+overflow-y: auto; overflow-x: hidden;
+-webkit-overflow-scrolling: touch;
+z-index: 1;
+padding: 10px 12px 100px;
+}
+
+#grid { font-size: 0; line-height: 0; }
+
+.mc {
+display: inline-block;
+width: calc(33.333% - 8px);
+margin: 4px;
+border-radius: 13px;
+overflow: hidden;
+position: relative;
+background: #fff0f5;
+border: 2.5px solid transparent;
+box-shadow: 0 2px 8px rgba(200,140,180,0.12);
+cursor: pointer;
+vertical-align: top;
+-webkit-tap-highlight-color: transparent;
+}
+.mc:after { content: ‘’; display: block; padding-top: 100%; }
+.mc img {
+position: absolute; top: 0; left: 0;
+width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.mc.sel { border-color: #e07fa8; box-shadow: 0 0 0 3px rgba(224,127,168,0.3); }
+.mc .ck {
+position: absolute; top: 5px; right: 5px;
+width: 22px; height: 22px; border-radius: 11px;
+background: #e07fa8; color: white;
+font-size: 12px; line-height: 22px; text-align: center;
+display: none; z-index: 3;
+box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.mc.sel .ck { display: block; }
+
+#empty-wrap { padding: 60px 20px; text-align: center; }
+#empty-ico {
+font-size: 52px; display: block; margin-bottom: 14px;
+-webkit-animation: bob 3s ease-in-out infinite;
+animation: bob 3s ease-in-out infinite;
+}
+@-webkit-keyframes bob { 0%,100%{-webkit-transform:translateY(0)} 50%{-webkit-transform:translateY(-8px)} }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+#empty-ttl { font-family:‘Playfair Display’,Georgia,serif; font-style:italic; font-size:20px; color:#c8a0b8; margin-bottom:8px; }
+#empty-sub { font-size:13px; color:#c8a0b8; line-height:1.75; }
+
+/* SEL BAR */
+#selbar {
+position: fixed;
+left: 50%; bottom: 28px;
+-webkit-transform: translateX(-50%) translateY(130px);
+transform: translateX(-50%) translateY(130px);
+background: white; border: 1.5px solid #f0d6e4; border-radius: 32px;
 padding: 8px 10px;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
-gap: 6px;
-box-shadow: 0 8px 32px rgba(200,140,180,0.28);
-z-index: 100;
+display: -webkit-box; display: -webkit-flex; display: flex;
+gap: 6px; -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+box-shadow: 0 8px 30px rgba(200,140,180,0.28); z-index: 50; white-space: nowrap;
 -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-white-space: nowrap;
 }
-.sel-bar.visible {
+#selbar.up {
 -webkit-transform: translateX(-50%) translateY(0);
 transform: translateX(-50%) translateY(0);
 }
-
-.sel-action {
-background: #fdf0f5;
-border: 1.5px solid #f0d6e4;
-border-radius: 20px;
-padding: 8px 14px;
-color: #4a3040;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
-gap: 5px;
--webkit-appearance: none;
-appearance: none;
+.sab {
+border-radius: 22px; padding: 8px 14px;
+font-family:‘DM Sans’,Arial,sans-serif; font-size:13px; font-weight:500;
+border: 1.5px solid #f0d6e4; background: #fdf0f5; color: #4a3040;
+cursor: pointer; -webkit-appearance: none; -webkit-tap-highlight-color: transparent;
+display: -webkit-inline-box; display: -webkit-inline-flex; display: inline-flex;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center; gap: 4px;
 }
-.sel-action:active { background: #f0d6e4; }
-.sel-action.danger {
-color: #d46080;
-border-color: #f0c0d0;
-background: #fff5f7;
-}
-.sel-action.cancel { color: #a8849a; }
+.sab:active { opacity: 0.7; }
+.sab.danger { color:#d46080; border-color:#f0c0d0; background:#fff5f7; }
+.sab.soft { color:#a8849a; }
 
-/* ── LIGHTBOX ── */
-.lightbox {
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
+/* LIGHTBOX */
+#lb {
+position: fixed; top:0; left:0; right:0; bottom:0;
 background: rgba(253,240,245,0.97);
--webkit-backdrop-filter: blur(20px);
-backdrop-filter: blur(20px);
-z-index: 300;
-display: none;
--webkit-flex-direction: column;
-flex-direction: column;
--webkit-align-items: center;
-align-items: center;
+z-index: 200; display: none;
+-webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+-webkit-box-align: center; -webkit-align-items: center; align-items: center;
 }
-.lightbox.open {
-display: -webkit-flex;
-display: flex;
+#lb.open { display: -webkit-box; display: -webkit-flex; display: flex; }
+#lbhd {
+width:100%; -webkit-flex-shrink:0; flex-shrink:0;
+display: -webkit-box; display: -webkit-flex; display: flex;
+-webkit-box-align:center; -webkit-align-items:center; align-items:center;
+-webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between;
+padding: 54px 16px 10px;
 }
+#lbclose {
+width:38px; height:38px; border-radius:19px;
+background:#fff; border:1.5px solid #f0d6e4; color:#a8849a; font-size:17px;
+cursor:pointer;
+display:-webkit-box;display:-webkit-flex;display:flex;
+-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+-webkit-appearance:none; -webkit-tap-highlight-color:transparent;
+}
+#lbclose:active{background:#f0d6e4}
+#lbtag{font-family:‘Playfair Display’,Georgia,serif;font-style:italic;font-size:13px;color:#a8849a}
+#lbimg-wrap {
+-webkit-flex:1;flex:1;width:100%;
+display:-webkit-box;display:-webkit-flex;display:flex;
+-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+padding:0 14px;overflow:hidden;
+}
+#lbimg-wrap img {
+max-width:100%;max-height:100%;object-fit:contain;
+border-radius:14px;box-shadow:0 8px 40px rgba(200,140,180,0.22);
+-webkit-user-select:auto;user-select:auto;pointer-events:auto;
+}
+#lbhint{font-size:11px;color:#c8a0b8;text-align:center;padding:8px 20px 4px;font-style:italic;font-family:‘Playfair Display’,Georgia,serif;-webkit-flex-shrink:0;flex-shrink:0}
+#lbbtns{
+display:-webkit-box;display:-webkit-flex;display:flex;
+gap:10px;padding:10px 18px 34px;width:100%;
+-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+-webkit-flex-shrink:0;flex-shrink:0;
+}
+.lbb {
+-webkit-flex:1;flex:1;max-width:150px;
+background:#fff;border:1.5px solid #f0d6e4;border-radius:16px;
+padding:13px 10px;color:#4a3040;
+font-family:‘DM Sans’,Arial,sans-serif;font-size:13px;font-weight:500;
+cursor:pointer;text-align:center;
+display:-webkit-box;display:-webkit-flex;display:flex;
+-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+gap:5px;-webkit-appearance:none;-webkit-tap-highlight-color:transparent;
+}
+.lbb:active{opacity:0.7}
+.lbb.pk{background:-webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);background:linear-gradient(135deg,#f4a7c3,#e07fa8);color:white;border:none;box-shadow:0 4px 16px rgba(224,127,168,0.4)}
+.lbb.rd{color:#d46080;border-color:#f0c0d0;background:#fff5f7}
 
-.lb-header {
-display: -webkit-flex;
-display: flex;
-width: 100%;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: space-between;
-justify-content: space-between;
-padding: 54px 18px 10px;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+/* MODAL */
+#mbg {
+position:fixed;top:0;left:0;right:0;bottom:0;
+background:rgba(74,48,64,0.35);z-index:300;
+opacity:0;pointer-events:none;
+-webkit-transition:opacity 0.2s;transition:opacity 0.2s;
+display:-webkit-box;display:-webkit-flex;display:flex;
+-webkit-box-align:end;-webkit-align-items:flex-end;align-items:flex-end;
 }
+#mbg.open{opacity:1;pointer-events:all}
+#mbox {
+background:#fff;border-radius:24px 24px 0 0;width:100%;
+padding:6px 18px 36px;border-top:1.5px solid #f0d6e4;
+-webkit-transform:translateY(100%);transform:translateY(100%);
+-webkit-transition:-webkit-transform 0.28s cubic-bezier(0.32,0.72,0,1);
+transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+#mbg.open #mbox{-webkit-transform:translateY(0);transform:translateY(0)}
+#mpill{width:36px;height:4px;background:#f0d6e4;border-radius:2px;margin:10px auto 14px}
+#mtitle{font-family:‘Playfair Display’,Georgia,serif;font-weight:700;font-style:italic;font-size:19px;color:#e07fa8;margin-bottom:14px;text-align:center}
+#mbody input{
+width:100%;background:#fdf0f5;border:1.5px solid #f0d6e4;border-radius:13px;
+padding:13px 15px;color:#4a3040;font-family:‘DM Sans’,Arial,sans-serif;font-size:15px;
+outline:none;margin-bottom:11px;-webkit-appearance:none;display:block;
+-webkit-box-sizing:border-box;box-sizing:border-box;
+}
+#mbody input:focus{border-color:#f4a7c3}
+.mb{
+width:100%;padding:14px;border-radius:14px;border:none;
+cursor:pointer;font-family:‘DM Sans’,Arial,sans-serif;font-weight:500;font-size:15px;
+margin-bottom:7px;-webkit-appearance:none;display:block;text-align:center;
+-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+}
+.mb:active{opacity:0.8}
+.mb.pk{background:-webkit-linear-gradient(135deg,#f4a7c3,#e07fa8);background:linear-gradient(135deg,#f4a7c3,#e07fa8);color:white;box-shadow:0 4px 14px rgba(224,127,168,0.32)}
+.mb.gy{background:#fdf0f5;color:#a8849a;border:1.5px solid #f0d6e4}
+.mb.rd{background:#fff0f3;color:#d46080;border:1.5px solid #f0c0d0}
+.fo{
+display:-webkit-box;display:-webkit-flex;display:flex;
+-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+gap:10px;background:#fdf0f5;border:1.5px solid #f0d6e4;border-radius:13px;
+padding:12px 14px;cursor:pointer;font-size:14px;font-family:‘DM Sans’,Arial,sans-serif;
+margin-bottom:7px;-webkit-tap-highlight-color:transparent;
+}
+.fo:active{border-color:#f4a7c3;background:#fff5f8}
+.fl{max-height:230px;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-bottom:10px}
 
-.lb-close {
-background: #ffffff;
-border: 1.5px solid #f0d6e4;
-border-radius: 50%;
-width: 38px;
-height: 38px;
-color: #a8849a;
-font-size: 18px;
-cursor: pointer;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
--webkit-appearance: none;
-appearance: none;
+/* TOAST */
+#toast{
+position:fixed;top:72px;left:50%;
+-webkit-transform:translateX(-50%) translateY(-8px);
+transform:translateX(-50%) translateY(-8px);
+background:white;border:1.5px solid #f0d6e4;border-radius:28px;
+padding:9px 20px;font-size:13px;font-family:‘DM Sans’,Arial,sans-serif;color:#4a3040;
+box-shadow:0 4px 20px rgba(200,140,180,0.22);
+opacity:0;-webkit-transition:opacity 0.2s,-webkit-transform 0.2s;transition:opacity 0.2s,transform 0.2s;
+pointer-events:none;z-index:999;white-space:nowrap;
 }
-.lb-close:active { background: #f0d6e4; }
+#toast.show{opacity:1;-webkit-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0)}
 
-.lb-folder-tag {
-font-family: ‘Playfair Display’, serif;
-font-style: italic;
-font-size: 13px;
-color: #a8849a;
-}
-
-.lb-img-wrap {
--webkit-flex: 1;
-flex: 1;
-width: 100%;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-padding: 0 16px;
-overflow: hidden;
-}
-.lb-img-wrap img {
-max-width: 100%;
-max-height: 100%;
-object-fit: contain;
-border-radius: 16px;
-box-shadow: 0 8px 40px rgba(200,140,180,0.22);
--webkit-user-select: auto;
-user-select: auto;
-pointer-events: auto;
-}
-
-.lb-hint {
-font-size: 11px;
-color: #c8a0b8;
-text-align: center;
-padding: 8px 20px 4px;
-font-style: italic;
-font-family: ‘Playfair Display’, serif;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-.lb-actions {
-display: -webkit-flex;
-display: flex;
-gap: 10px;
-padding: 10px 20px 32px;
-width: 100%;
--webkit-justify-content: center;
-justify-content: center;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
-}
-
-.lb-btn {
--webkit-flex: 1;
-flex: 1;
-max-width: 150px;
-background: #ffffff;
-border: 1.5px solid #f0d6e4;
-border-radius: 18px;
-padding: 13px 10px;
-color: #4a3040;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-text-align: center;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
-gap: 6px;
-box-shadow: 0 2px 8px rgba(200,140,180,0.1);
--webkit-appearance: none;
-appearance: none;
-}
-.lb-btn:active { background: #fdf0f5; }
-.lb-btn.primary {
-background: -webkit-linear-gradient(135deg, #f4a7c3, #e07fa8);
-background: linear-gradient(135deg, #f4a7c3, #e07fa8);
-color: white;
-border: none;
-box-shadow: 0 4px 16px rgba(224,127,168,0.4);
-}
-.lb-btn.del {
-color: #d46080;
-border-color: #f0c0d0;
-background: #fff5f7;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(74,48,64,0.35);
-z-index: 200;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: flex-end;
-align-items: flex-end;
-opacity: 0;
-pointer-events: none;
--webkit-transition: opacity 0.2s;
-transition: opacity 0.2s;
-}
-.modal-overlay.open {
-opacity: 1;
-pointer-events: all;
-}
-
-.modal {
-background: white;
-border-radius: 26px 26px 0 0;
-width: 100%;
-padding: 8px 20px 36px;
--webkit-transform: translateY(100%);
-transform: translateY(100%);
--webkit-transition: -webkit-transform 0.28s cubic-bezier(0.32,0.72,0,1);
-transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
-border-top: 1.5px solid #f0d6e4;
-}
-.modal-overlay.open .modal {
--webkit-transform: translateY(0);
-transform: translateY(0);
-}
-
-.modal-pill {
-width: 36px;
-height: 4px;
-background: #f0d6e4;
-border-radius: 2px;
-margin: 10px auto 16px;
-}
-
-.modal-title {
-font-family: ‘Playfair Display’, serif;
-font-weight: 700;
-font-style: italic;
-font-size: 19px;
-color: #e07fa8;
-margin-bottom: 16px;
-text-align: center;
-}
-
-.modal-input {
-width: 100%;
-background: #fdf0f5;
-border: 1.5px solid #f0d6e4;
-border-radius: 14px;
-padding: 13px 16px;
-color: #4a3040;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 15px;
-outline: none;
-margin-bottom: 12px;
--webkit-appearance: none;
-appearance: none;
-display: block;
-}
-.modal-input:focus { border-color: #f4a7c3; }
-
-.modal-btn {
-width: 100%;
-padding: 14px;
-border-radius: 16px;
-border: none;
-cursor: pointer;
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 500;
-font-size: 15px;
-margin-bottom: 8px;
--webkit-appearance: none;
-appearance: none;
-display: block;
-text-align: center;
-}
-.modal-btn:active { opacity: 0.82; }
-.modal-btn.primary {
-background: -webkit-linear-gradient(135deg, #f4a7c3, #e07fa8);
-background: linear-gradient(135deg, #f4a7c3, #e07fa8);
-color: white;
-box-shadow: 0 4px 14px rgba(224,127,168,0.32);
-}
-.modal-btn.secondary {
-background: #fdf0f5;
-color: #a8849a;
-border: 1.5px solid #f0d6e4;
-}
-.modal-btn.danger {
-background: #fff0f3;
-color: #d46080;
-border: 1.5px solid #f0c0d0;
-}
-
-.folder-list {
-display: -webkit-flex;
-display: flex;
--webkit-flex-direction: column;
-flex-direction: column;
-gap: 7px;
-max-height: 220px;
-overflow-y: auto;
-margin-bottom: 12px;
--webkit-overflow-scrolling: touch;
-}
-
-.folder-option {
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
-gap: 10px;
-background: #fdf0f5;
-border: 1.5px solid #f0d6e4;
-border-radius: 14px;
-padding: 12px 14px;
-cursor: pointer;
-font-size: 14px;
-font-family: ‘DM Sans’, sans-serif;
--webkit-transition: border-color 0.15s;
-transition: border-color 0.15s;
-}
-.folder-option:active {
-border-color: #f4a7c3;
-background: #fff5f8;
-}
-
-/* ── TOAST ── */
-.toast {
-position: fixed;
-top: 72px;
-left: 50%;
--webkit-transform: translateX(-50%) translateY(-6px);
-transform: translateX(-50%) translateY(-6px);
-background: white;
-border: 1.5px solid #f0d6e4;
-border-radius: 30px;
-padding: 9px 20px;
-font-size: 13px;
-font-family: ‘DM Sans’, sans-serif;
-color: #4a3040;
-box-shadow: 0 4px 20px rgba(200,140,180,0.2);
-opacity: 0;
--webkit-transition: opacity 0.2s, -webkit-transform 0.2s;
-transition: opacity 0.2s, transform 0.2s;
-pointer-events: none;
-z-index: 500;
-white-space: nowrap;
-}
-.toast.show {
-opacity: 1;
--webkit-transform: translateX(-50%) translateY(0);
-transform: translateX(-50%) translateY(0);
-}
+#upload-input{display:none}
 </style>
 
 </head>
 <body>
-<div class="blob1"></div>
-<div class="blob2"></div>
 
-<div id="app">
-  <div class="header">
-    <div class="logo-wrap">
-      <span class="logo-flower">🌸</span>
-      <span class="logo">Meme Box</span>
+<div id="dotbg"></div>
+<div id="b1"></div>
+<div id="b2"></div>
+
+<!-- HEADER -->
+
+<div id="header">
+  <div id="header-inner">
+    <div id="logo-wrap">
+      <span id="logo-flower">🌸</span>
+      <span id="logo-text">Meme Box</span>
     </div>
-    <div class="header-actions">
-      <!-- Select button matching the + button style with checkmark SVG -->
-      <button class="select-btn" id="select-btn" aria-label="Select">
-        <svg viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
+    <div id="btns">
+      <button class="hbtn" id="selbtn" onclick="toggleSel()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </button>
-      <label class="add-btn">
-        <span style="line-height:1;font-size:24px;margin-top:-1px">+</span>
+      <label class="hbtn" style="cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         <input type="file" id="upload-input" accept="image/*" multiple>
       </label>
     </div>
   </div>
+</div>
 
-  <div class="folder-bar" id="folder-bar"></div>
-  <div class="count-label" id="count-label"></div>
+<!-- FOLDER STRIP -->
 
-  <div class="grid-container">
-    <div class="grid" id="grid"></div>
-  </div>
+<div id="folder-strip"><!-- JS fills this --></div>
 
-  <!-- sel-bar starts off-screen, only shown when selecting -->
+<!-- COUNT -->
 
-  <div class="sel-bar" id="sel-bar">
-    <button class="sel-action" id="sel-move">📂 Move</button>
-    <button class="sel-action danger" id="sel-delete">🗑 Delete</button>
-    <button class="sel-action cancel" id="sel-cancel">✕ Done</button>
-  </div>
+<div id="count-row"></div>
+
+<!-- SCROLL AREA -->
+
+<div id="scroll-box">
+  <div id="grid"></div>
+</div>
+
+<!-- SEL BAR -->
+
+<div id="selbar">
+  <button class="sab" onclick="doMove()">📂 Move</button>
+  <button class="sab danger" onclick="doDelete()">🗑 Delete</button>
+  <button class="sab soft" onclick="exitSel()">✕ Done</button>
 </div>
 
 <!-- LIGHTBOX -->
 
-<div class="lightbox" id="lightbox">
-  <div class="lb-header">
-    <button class="lb-close" id="lb-close">✕</button>
-    <div class="lb-folder-tag" id="lb-folder-tag"></div>
+<div id="lb">
+  <div id="lbhd">
+    <button id="lbclose" onclick="closeLB()">✕</button>
+    <div id="lbtag"></div>
     <div style="width:38px"></div>
   </div>
-  <div class="lb-img-wrap">
-    <img id="lb-img" src="" alt="">
-  </div>
-  <div class="lb-hint">✦ hold image to save or copy to photos</div>
-  <div class="lb-actions">
-    <button class="lb-btn primary" id="lb-share">↑ Share</button>
-    <button class="lb-btn" id="lb-move">📂 Move</button>
-    <button class="lb-btn del" id="lb-delete">🗑 Delete</button>
+  <div id="lbimg-wrap"><img id="lbimg" src="" alt=""></div>
+  <div id="lbhint">✦ hold image to save or copy</div>
+  <div id="lbbtns">
+    <button class="lbb pk" onclick="doShare()">↑ Share</button>
+    <button class="lbb" onclick="doLBMove()">📂 Move</button>
+    <button class="lbb rd" onclick="doLBDel()">🗑 Delete</button>
   </div>
 </div>
 
 <!-- MODAL -->
 
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-pill"></div>
-    <div class="modal-title" id="modal-title"></div>
-    <div id="modal-body"></div>
+<div id="mbg" onclick="bgTap(event)">
+  <div id="mbox">
+    <div id="mpill"></div>
+    <div id="mtitle"></div>
+    <div id="mbody"></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast"></div>
 
 <script>
-// ── DB ───────────────────────────────────────────────────────────────
-var DB_NAME = 'memebox_v3', DB_VER = 1, db;
+// ─── GLOBALS ────────────────────────────────────────────────────────
+var _db = null;
+var _folders = [];
+var _memes = [];
+var _curF = 'all';
+var _inSel = false;
+var _picked = {};
+var _lbId = null;
+var _toastT = null;
+var _headerH = 0;
+var _stripH = 0;
+var _countH = 0;
 
+// ─── LAYOUT MEASURE — set scroll-box top dynamically ───────────────
+function measureLayout() {
+  var h = document.getElementById('header');
+  var s = document.getElementById('folder-strip');
+  var c = document.getElementById('count-row');
+  _headerH = h ? h.offsetHeight : 90;
+  _stripH = s ? s.offsetHeight : 38;
+  _countH = c ? c.offsetHeight : 22;
+
+  var fs = document.getElementById('folder-strip');
+  if (fs) fs.style.top = _headerH + 'px';
+
+  var cr = document.getElementById('count-row');
+  if (cr) cr.style.top = (_headerH + _stripH) + 'px';
+
+  var sb = document.getElementById('scroll-box');
+  if (sb) sb.style.top = (_headerH + _stripH + _countH) + 'px';
+}
+
+// ─── DB ─────────────────────────────────────────────────────────────
 function openDB() {
-  return new Promise(function(res, rej) {
-    var req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = function(e) {
+  return new Promise(function(ok, no) {
+    var r = indexedDB.open('mbx5', 1);
+    r.onupgradeneeded = function(e) {
       var d = e.target.result;
       if (!d.objectStoreNames.contains('memes')) {
         var s = d.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
@@ -891,588 +487,455 @@ function openDB() {
         d.createObjectStore('folders', { keyPath: 'name' });
       }
     };
-    req.onsuccess = function(e) { db = e.target.result; res(); };
-    req.onerror = function() { rej(req.error); };
-    req.onblocked = function() { rej(new Error('DB blocked')); };
+    r.onsuccess = function(e) { _db = e.target.result; ok(); };
+    r.onerror = function() { no(r.error); };
+    r.onblocked = function() { no(new Error('blocked')); };
   });
-}
-
-function getStore(name, mode) {
-  return db.transaction(name, mode || 'readonly').objectStore(name);
 }
 
 function dbGet(store, key) {
-  return new Promise(function(res, rej) {
-    var r = getStore(store).get(key);
-    r.onsuccess = function() { res(r.result); };
-    r.onerror = function() { rej(r.error); };
+  return new Promise(function(ok, no) {
+    var r = _db.transaction(store).objectStore(store).get(key);
+    r.onsuccess = function() { ok(r.result); };
+    r.onerror = function() { no(r.error); };
   });
 }
-
-function dbGetAll(store, idx, val) {
-  return new Promise(function(res, rej) {
-    var r;
-    try {
-      r = (idx !== undefined && val !== undefined)
-        ? getStore(store).index(idx).getAll(val)
-        : getStore(store).getAll();
-    } catch(e) { rej(e); return; }
-    r.onsuccess = function() { res(r.result || []); };
-    r.onerror = function() { rej(r.error); };
+function dbAll(store, idx, val) {
+  return new Promise(function(ok, no) {
+    var os = _db.transaction(store).objectStore(store);
+    var r = (idx && val !== undefined) ? os.index(idx).getAll(val) : os.getAll();
+    r.onsuccess = function() { ok(r.result || []); };
+    r.onerror = function() { no(r.error); };
   });
 }
-
-function dbPut(store, data) {
-  return new Promise(function(res, rej) {
-    var r = getStore(store, 'readwrite').put(data);
-    r.onsuccess = function() { res(r.result); };
-    r.onerror = function() { rej(r.error); };
+function dbPut(store, obj) {
+  return new Promise(function(ok, no) {
+    var r = _db.transaction(store,'readwrite').objectStore(store).put(obj);
+    r.onsuccess = function() { ok(r.result); };
+    r.onerror = function() { no(r.error); };
   });
 }
-
 function dbDel(store, key) {
-  return new Promise(function(res, rej) {
-    var r = getStore(store, 'readwrite').delete(key);
-    r.onsuccess = function() { res(); };
-    r.onerror = function() { rej(r.error); };
+  return new Promise(function(ok, no) {
+    var r = _db.transaction(store,'readwrite').objectStore(store).delete(key);
+    r.onsuccess = function() { ok(); };
+    r.onerror = function() { no(r.error); };
   });
 }
-
 function dbCount(store, idx, val) {
-  return new Promise(function(res, rej) {
-    var r = idx ? getStore(store).index(idx).count(val) : getStore(store).count();
-    r.onsuccess = function() { res(r.result); };
-    r.onerror = function() { rej(r.error); };
+  return new Promise(function(ok, no) {
+    var os = _db.transaction(store).objectStore(store);
+    var r = (idx && val !== undefined) ? os.index(idx).count(val) : os.count();
+    r.onsuccess = function() { ok(r.result); };
+    r.onerror = function() { no(r.error); };
   });
 }
 
-// ── STATE ────────────────────────────────────────────────────────────
-var currentFolder = 'all';
-var folders = [];
-var memes = [];
-var selecting = false;
-var selected = {};
-var lightboxId = null;
-
-// ── INIT — pure .then() chains, no async/await ────────────────────────
-function init() {
-  // Show empty state immediately so UI isn't blank while DB loads
-  showEmptyState();
-  renderFolderBarBasic();
+// ─── BOOT ────────────────────────────────────────────────────────────
+function boot() {
+  measureLayout();
+  paintStrip();
+  paintEmpty();
 
   openDB().then(function() {
-    return dbGetAll('folders');
-  }).then(function(result) {
-    folders = result || [];
-    renderFolderBar();
-    return renderGrid();
+    return dbAll('folders');
+  }).then(function(rows) {
+    _folders = rows || [];
+    paintStrip();
+    return loadGrid();
   }).catch(function(err) {
-    console.error('DB init error:', err);
-    // Still show the UI even if DB fails
-    renderFolderBar();
-    showEmptyState();
+    console.log('boot err', err);
+    paintStrip();
+    paintEmpty();
   });
 }
 
-// Show basic folder bar (All chip + New Folder) before DB is ready
-function renderFolderBarBasic() {
-  var bar = document.getElementById('folder-bar');
-  bar.innerHTML = '';
-  var chip = document.createElement('div');
-  chip.className = 'folder-chip active';
-  chip.innerHTML = '🌸 All <span class="chip-count" id="cnt-all">0</span>';
-  chip.onclick = function() { switchFolder('all'); };
-  bar.appendChild(chip);
-  var nb = document.createElement('button');
-  nb.className = 'new-folder-btn';
-  nb.textContent = '✦ New Folder';
-  nb.onclick = showNewFolderModal;
-  bar.appendChild(nb);
-}
+// ─── FOLDER STRIP ───────────────────────────────────────────────────
+function paintStrip() {
+  var strip = document.getElementById('folder-strip');
+  strip.innerHTML = '';
 
-function showEmptyState() {
-  var grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  var emp = document.createElement('div');
-  emp.className = 'empty';
-  emp.innerHTML =
-    '<div class="empty-flower">🌷</div>' +
-    '<div class="empty-title">nothing here yet~</div>' +
-    '<div class="empty-sub">tap <strong style="color:#e07fa8">＋</strong> to add memes<br>from your photos</div>';
-  grid.appendChild(emp);
-  document.getElementById('count-label').textContent = '';
-}
+  // All chip
+  var a = document.createElement('span');
+  a.className = 'fc' + (_curF === 'all' ? ' on' : '');
+  a.innerHTML = '🌸 All <span class="cc" id="cc-all">0</span>';
+  a.onclick = function() { switchF('all'); };
+  strip.appendChild(a);
 
-// ── FOLDERS ──────────────────────────────────────────────────────────
-function renderFolderBar() {
-  var bar = document.getElementById('folder-bar');
-  bar.innerHTML = '';
-  bar.appendChild(makeChip('🌸 All', 'all'));
-  for (var i = 0; i < folders.length; i++) {
+  // Folder chips
+  for (var i = 0; i < _folders.length; i++) {
     (function(f) {
-      var chip = makeChip('📂 ' + f.name, f.name);
-      var timer;
-      chip.addEventListener('touchstart', function() {
-        timer = setTimeout(function() { showFolderOptions(f.name); }, 600);
+      var c = document.createElement('span');
+      c.className = 'fc' + (_curF === f.name ? ' on' : '');
+      c.innerHTML = '📂 ' + f.name + ' <span class="cc" id="cc-' + f.name + '">0</span>';
+      c.onclick = function() { switchF(f.name); };
+      var pt;
+      c.addEventListener('touchstart', function() {
+        pt = setTimeout(function() { showFolderOpts(f.name); }, 600);
       }, { passive: true });
-      chip.addEventListener('touchend', function() { clearTimeout(timer); });
-      chip.addEventListener('touchmove', function() { clearTimeout(timer); });
-      bar.appendChild(chip);
-    })(folders[i]);
+      c.addEventListener('touchend', function() { clearTimeout(pt); });
+      c.addEventListener('touchmove', function() { clearTimeout(pt); });
+      strip.appendChild(c);
+    })(_folders[i]);
   }
+
+  // New folder button
   var nb = document.createElement('button');
-  nb.className = 'new-folder-btn';
+  nb.className = 'nfb';
   nb.textContent = '✦ New Folder';
   nb.onclick = showNewFolderModal;
-  bar.appendChild(nb);
-  updateCounts();
+  strip.appendChild(nb);
+
+  // Re-measure after strip renders
+  setTimeout(function() {
+    measureLayout();
+    refreshCounts();
+  }, 0);
 }
 
-function makeChip(label, folder) {
-  var c = document.createElement('div');
-  c.className = 'folder-chip' + (currentFolder === folder ? ' active' : '');
-  c.innerHTML = label + ' <span class="chip-count" id="cnt-' + folder + '">0</span>';
-  c.onclick = function() { switchFolder(folder); };
-  return c;
-}
-
-function updateCounts() {
+function refreshCounts() {
+  if (!_db) return;
   dbCount('memes').then(function(n) {
-    var el = document.getElementById('cnt-all');
+    var el = document.getElementById('cc-all');
     if (el) el.textContent = n;
-  }).catch(function() {});
-
-  for (var i = 0; i < folders.length; i++) {
-    (function(fname) {
-      dbCount('memes', 'folder', fname).then(function(c) {
-        var fe = document.getElementById('cnt-' + fname);
-        if (fe) fe.textContent = c;
-      }).catch(function() {});
-    })(folders[i].name);
+  }).catch(function(){});
+  for (var i = 0; i < _folders.length; i++) {
+    (function(name) {
+      dbCount('memes', 'folder', name).then(function(n) {
+        var el = document.getElementById('cc-' + name);
+        if (el) el.textContent = n;
+      }).catch(function(){});
+    })(_folders[i].name);
   }
 }
 
-function switchFolder(f) {
-  currentFolder = f;
-  exitSelect();
-  renderFolderBar();
-  renderGrid();
+function switchF(f) {
+  _curF = f; _inSel = false; _picked = {};
+  document.getElementById('selbar').className = '';
+  document.getElementById('selbtn').className = 'hbtn';
+  paintStrip();
+  loadGrid();
 }
 
-// ── GRID ─────────────────────────────────────────────────────────────
-function renderGrid() {
+// ─── GRID ────────────────────────────────────────────────────────────
+function loadGrid() {
+  var p = _curF === 'all' ? dbAll('memes') : dbAll('memes', 'folder', _curF);
+  return p.then(function(rows) {
+    _memes = rows || [];
+    _memes.sort(function(a, b) { return b.id - a.id; });
+    paintGrid();
+  }).catch(function() { paintEmpty(); });
+}
+
+function paintGrid() {
   var grid = document.getElementById('grid');
+  var cr = document.getElementById('count-row');
+
+  if (!_memes.length) {
+    cr.textContent = '';
+    paintEmpty();
+    return;
+  }
+
+  cr.textContent = _memes.length + ' meme' + (_memes.length !== 1 ? 's' : '') + ' ✦';
   grid.innerHTML = '';
 
-  var p = currentFolder === 'all'
-    ? dbGetAll('memes')
-    : dbGetAll('memes', 'folder', currentFolder);
+  for (var i = 0; i < _memes.length; i++) {
+    (function(m) {
+      var card = document.createElement('div');
+      card.className = 'mc' + (_picked[m.id] ? ' sel' : '');
 
-  return p.then(function(result) {
-    memes = result || [];
-    memes.sort(function(a, b) { return b.id - a.id; });
+      var img = document.createElement('img');
+      img.src = m.dataUrl;
+      img.loading = 'lazy';
+      card.appendChild(img);
 
-    var cl = document.getElementById('count-label');
-    cl.textContent = memes.length
-      ? memes.length + ' meme' + (memes.length !== 1 ? 's' : '') + ' ✦'
-      : '';
+      var ck = document.createElement('div');
+      ck.className = 'ck';
+      ck.textContent = '✓';
+      card.appendChild(ck);
 
-    if (!memes.length) {
-      showEmptyState();
-      updateCounts();
-      return;
-    }
+      var pt;
+      card.addEventListener('touchstart', function() {
+        pt = setTimeout(function() {
+          if (!_inSel) enterSel();
+          pickToggle(m.id, card);
+        }, 500);
+      }, { passive: true });
+      card.addEventListener('touchend', function() { clearTimeout(pt); });
+      card.addEventListener('touchmove', function() { clearTimeout(pt); });
+      card.onclick = function() {
+        if (_inSel) { pickToggle(m.id, card); }
+        else { openLB(m.id); }
+      };
 
-    for (var i = 0; i < memes.length; i++) {
-      (function(m) {
-        var card = document.createElement('div');
-        card.className = 'meme-card' + (selected[m.id] ? ' selected' : '');
-
-        var img = document.createElement('img');
-        img.src = m.dataUrl;
-        img.loading = 'lazy';
-        card.appendChild(img);
-
-        var badge = document.createElement('div');
-        badge.className = 'sel-badge';
-        badge.textContent = '✓';
-        card.appendChild(badge);
-
-        var pressTimer;
-        card.addEventListener('touchstart', function() {
-          pressTimer = setTimeout(function() {
-            if (!selecting) enterSelect();
-            toggleSel(m.id, card);
-          }, 500);
-        }, { passive: true });
-        card.addEventListener('touchend', function() { clearTimeout(pressTimer); });
-        card.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
-        card.addEventListener('click', function() {
-          if (selecting) { toggleSel(m.id, card); }
-          else { openLightbox(m.id); }
-        });
-
-        grid.appendChild(card);
-      })(memes[i]);
-    }
-    updateCounts();
-  }).catch(function(err) {
-    console.error('renderGrid error:', err);
-    showEmptyState();
-  });
-}
-
-// ── SELECT ────────────────────────────────────────────────────────────
-function enterSelect() {
-  selecting = true;
-  selected = {};
-  document.getElementById('sel-bar').classList.add('visible');
-  document.getElementById('select-btn').classList.add('active');
-}
-
-function exitSelect() {
-  selecting = false;
-  selected = {};
-  var cards = document.querySelectorAll('.meme-card.selected');
-  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
-  document.getElementById('sel-bar').classList.remove('visible');
-  document.getElementById('select-btn').classList.remove('active');
-}
-
-function toggleSel(id, card) {
-  if (selected[id]) {
-    delete selected[id];
-    card.classList.remove('selected');
-  } else {
-    selected[id] = true;
-    card.classList.add('selected');
+      grid.appendChild(card);
+    })(_memes[i]);
   }
+  refreshCounts();
 }
 
-function getSelIds() {
-  return Object.keys(selected).map(function(k) { return parseInt(k, 10); });
+function paintEmpty() {
+  document.getElementById('grid').innerHTML =
+    '<div id="empty-wrap">' +
+    '<span id="empty-ico">🌷</span>' +
+    '<div id="empty-ttl">nothing here yet~</div>' +
+    '<div id="empty-sub">tap <strong style="color:#e07fa8">+</strong> to add memes from your photos</div>' +
+    '</div>';
+  refreshCounts();
 }
 
-document.getElementById('select-btn').onclick = function() {
-  if (selecting) exitSelect(); else enterSelect();
-};
-
-document.getElementById('sel-cancel').onclick = exitSelect;
-
-document.getElementById('sel-delete').onclick = function() {
-  var ids = getSelIds();
-  if (!ids.length) return;
-  function delNext(i) {
-    if (i >= ids.length) {
-      showToast('🗑 Deleted ' + ids.length);
-      exitSelect();
-      renderGrid();
-      return;
-    }
-    dbDel('memes', ids[i]).then(function() { delNext(i + 1); }).catch(function() { delNext(i + 1); });
-  }
-  delNext(0);
-};
-
-document.getElementById('sel-move').onclick = function() {
-  var ids = getSelIds();
-  if (!ids.length) return;
-  showMoveModal(ids, false);
-};
-
-// ── UPLOAD ────────────────────────────────────────────────────────────
-document.getElementById('upload-input').addEventListener('change', function(e) {
-  var files = Array.from(e.target.files);
-  if (!files.length) return;
-  var count = 0;
-
-  function processNext(i) {
-    if (i >= files.length) {
-      e.target.value = '';
-      showToast('🌸 Added ' + count + ' meme' + (count !== 1 ? 's' : ''));
-      renderGrid();
-      return;
-    }
-    toDataUrl(files[i]).then(function(url) {
-      var folder = currentFolder === 'all' ? '' : currentFolder;
-      return dbPut('memes', { dataUrl: url, folder: folder, added: Date.now() });
-    }).then(function() {
-      count++;
-      processNext(i + 1);
-    }).catch(function() {
-      processNext(i + 1);
-    });
-  }
-  processNext(0);
-});
-
-function toDataUrl(file) {
-  return new Promise(function(res, rej) {
-    var r = new FileReader();
-    r.onload = function() { res(r.result); };
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-// ── LIGHTBOX ──────────────────────────────────────────────────────────
 function getMeme(id) {
-  for (var i = 0; i < memes.length; i++) if (memes[i].id === id) return memes[i];
+  for (var i = 0; i < _memes.length; i++) if (_memes[i].id === id) return _memes[i];
   return null;
 }
 
-function openLightbox(id) {
-  var m = getMeme(id);
-  if (!m) return;
-  lightboxId = id;
-  document.getElementById('lb-img').src = m.dataUrl;
-  document.getElementById('lb-folder-tag').textContent = m.folder ? '📂 ' + m.folder : '';
-  document.getElementById('lightbox').classList.add('open');
+// ─── SELECT ─────────────────────────────────────────────────────────
+function toggleSel() { if (_inSel) exitSel(); else enterSel(); }
+function enterSel() {
+  _inSel = true; _picked = {};
+  document.getElementById('selbar').className = 'up';
+  document.getElementById('selbtn').className = 'hbtn lilac';
+}
+function exitSel() {
+  _inSel = false; _picked = {};
+  var cs = document.querySelectorAll('.mc.sel');
+  for (var i = 0; i < cs.length; i++) cs[i].classList.remove('sel');
+  document.getElementById('selbar').className = '';
+  document.getElementById('selbtn').className = 'hbtn';
+}
+function pickToggle(id, card) {
+  if (_picked[id]) { delete _picked[id]; card.classList.remove('sel'); }
+  else { _picked[id] = true; card.classList.add('sel'); }
+}
+function pickedList() {
+  return Object.keys(_picked).map(function(k) { return parseInt(k, 10); });
 }
 
-document.getElementById('lb-close').onclick = function() {
-  document.getElementById('lightbox').classList.remove('open');
-  lightboxId = null;
-};
+function doDelete() {
+  var ids = pickedList();
+  if (!ids.length) { showToast('Select some memes first'); return; }
+  var i = 0;
+  function nx() {
+    if (i >= ids.length) {
+      showToast('🗑 Deleted ' + ids.length);
+      exitSel(); loadGrid();
+      return;
+    }
+    dbDel('memes', ids[i]).then(function() { i++; nx(); }).catch(function() { i++; nx(); });
+  }
+  nx();
+}
+function doMove() {
+  var ids = pickedList();
+  if (!ids.length) { showToast('Select some memes first'); return; }
+  showMoveModal(ids, false);
+}
 
-document.getElementById('lb-share').onclick = function() {
-  var m = getMeme(lightboxId);
-  if (!m) return;
+// ─── UPLOAD ─────────────────────────────────────────────────────────
+document.getElementById('upload-input').addEventListener('change', function(e) {
+  var files = e.target.files;
+  if (!files || !files.length) return;
+  var list = [];
+  for (var i = 0; i < files.length; i++) list.push(files[i]);
+  var saved = 0;
+  function nx(i) {
+    if (i >= list.length) {
+      e.target.value = '';
+      showToast('🌸 Added ' + saved + (saved !== 1 ? ' memes' : ' meme'));
+      loadGrid();
+      return;
+    }
+    fileToDataUrl(list[i]).then(function(url) {
+      var folder = _curF === 'all' ? '' : _curF;
+      return dbPut('memes', { dataUrl: url, folder: folder, added: Date.now() });
+    }).then(function() { saved++; nx(i + 1); })
+      .catch(function() { nx(i + 1); });
+  }
+  nx(0);
+});
+
+function fileToDataUrl(f) {
+  return new Promise(function(ok, no) {
+    var reader = new FileReader();
+    reader.onload = function() { ok(reader.result); };
+    reader.onerror = no;
+    reader.readAsDataURL(f);
+  });
+}
+
+// ─── LIGHTBOX ────────────────────────────────────────────────────────
+function openLB(id) {
+  var m = getMeme(id); if (!m) return;
+  _lbId = id;
+  document.getElementById('lbimg').src = m.dataUrl;
+  document.getElementById('lbtag').textContent = m.folder ? '📂 ' + m.folder : '';
+  document.getElementById('lb').className = 'open';
+}
+function closeLB() { document.getElementById('lb').className = ''; _lbId = null; }
+
+function doShare() {
+  var m = getMeme(_lbId); if (!m) return;
   if (navigator.share) {
     try {
-      var blob = b64toBlob(m.dataUrl);
-      var ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/gif' ? '.gif' : '.jpg');
+      var blob = urlToBlob(m.dataUrl);
+      var ext = blob.type === 'image/png' ? '.png' : blob.type === 'image/gif' ? '.gif' : '.jpg';
       var file = new File([blob], 'meme' + ext, { type: blob.type });
-      var shareData = { files: [file] };
-      var canShare = navigator.canShare ? navigator.canShare(shareData) : true;
-      if (canShare) {
-        navigator.share(shareData).then(function() {}).catch(function(err) {
-          if (!err || err.name !== 'AbortError') openImageTab(m.dataUrl);
+      var sd = { files: [file] };
+      if (!navigator.canShare || navigator.canShare(sd)) {
+        navigator.share(sd).catch(function(e) {
+          if (e.name !== 'AbortError') openImgWin(m.dataUrl);
         });
         return;
       }
     } catch(e) {}
   }
-  openImageTab(m.dataUrl);
-};
-
-document.getElementById('lb-move').onclick = function() {
-  if (!lightboxId) return;
-  showMoveModal([lightboxId], true);
-};
-
-document.getElementById('lb-delete').onclick = function() {
-  if (!lightboxId) return;
-  var id = lightboxId;
+  openImgWin(m.dataUrl);
+}
+function doLBMove() { if (_lbId) showMoveModal([_lbId], true); }
+function doLBDel() {
+  if (!_lbId) return;
+  var id = _lbId;
   dbDel('memes', id).then(function() {
-    document.getElementById('lightbox').classList.remove('open');
-    lightboxId = null;
-    showToast('🗑 Deleted');
-    renderGrid();
-  }).catch(function() {});
-};
-
-function openImageTab(dataUrl) {
-  var html = '<!DOCTYPE html><html><head>'
-    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
-    + '<style>*{margin:0;padding:0;box-sizing:border-box}'
-    + 'body{background:#fdf0f5;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;min-height:100vh}'
-    + 'img{max-width:100%;max-height:100vh;border-radius:12px}'
-    + 'p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c8a0b8;font-family:sans-serif;font-size:13px}'
-    + '</style></head><body>'
-
-```
-+ '<img src="' + dataUrl + '">'
-+ '<p>Hold image to Save to Photos or Copy</p>'
-+ '</body></html>';
-```
-
-var win = window.open(’’, ‘_blank’);
-if (win) {
-win.document.write(html);
-win.document.close();
-showToast(‘Hold image to Save to Photos’);
-} else {
-showToast(‘Allow pop-ups then try again’);
-}
+    closeLB(); showToast('🗑 Deleted'); loadGrid();
+  }).catch(function() { showToast('Error'); });
 }
 
-function b64toBlob(dataUrl) {
-var parts = dataUrl.split(’,’);
-var mime = parts[0].match(/:(.*?);/)[1];
-var raw = atob(parts[1]);
-var arr = new Uint8Array(raw.length);
-for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-return new Blob([arr], { type: mime });
+function openImgWin(url) {
+  var h = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fdf0f5;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:100vh;border-radius:12px}p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c8a0b8;font-family:sans-serif;font-size:14px}</style></head><body><img src="' + url + '"><p>Hold image to Save to Photos</p></body></html>';
+
+var w = window.open(’’, ‘_blank’);
+if (w) { w.document.write(h); w.document.close(); showToast(‘Hold image to Save’); }
+else showToast(‘Allow pop-ups and try again’);
+}
+function urlToBlob(url) {
+var p = url.split(’,’); var mime = p[0].match(/:(.*?);/)[1];
+var raw = atob(p[1]); var buf = new Uint8Array(raw.length);
+for (var i = 0; i < raw.length; i++) buf[i] = raw.charCodeAt(i);
+return new Blob([buf], { type: mime });
 }
 
-// ── MODALS ────────────────────────────────────────────────────────────
-function openModal(title, body) {
-document.getElementById(‘modal-title’).textContent = title;
-document.getElementById(‘modal-body’).innerHTML = body;
-document.getElementById(‘modal-overlay’).classList.add(‘open’);
+// ─── MODALS ──────────────────────────────────────────────────────────
+function showModal(title, html) {
+document.getElementById(‘mtitle’).textContent = title;
+document.getElementById(‘mbody’).innerHTML = html;
+document.getElementById(‘mbg’).className = ‘open’;
 }
-function closeModal() {
-document.getElementById(‘modal-overlay’).classList.remove(‘open’);
-}
-document.getElementById(‘modal-overlay’).addEventListener(‘click’, function(e) {
-if (e.target === document.getElementById(‘modal-overlay’)) closeModal();
-});
+function closeModal() { document.getElementById(‘mbg’).className = ‘’; }
+function bgTap(e) { if (e.target === document.getElementById(‘mbg’)) closeModal(); }
 
 function showNewFolderModal() {
-openModal(‘New Folder ✦’,
-‘<input class="modal-input" id="fn-input" type="text" placeholder="Folder name…" maxlength="30">’ +
-‘<button class="modal-btn primary" id="fn-ok">Create</button>’ +
-‘<button class="modal-btn secondary" id="fn-cancel">Cancel</button>’);
-var inp = document.getElementById(‘fn-input’);
-setTimeout(function() { inp.focus(); }, 80);
-inp.addEventListener(‘keydown’, function(ev) { if (ev.key === ‘Enter’) doCreate(); });
-document.getElementById(‘fn-ok’).onclick = doCreate;
-document.getElementById(‘fn-cancel’).onclick = closeModal;
-
-function doCreate() {
-var name = document.getElementById(‘fn-input’).value.trim();
-if (!name) { showToast(‘Enter a name ✦’); return; }
-for (var i = 0; i < folders.length; i++) {
-if (folders[i].name === name) { showToast(‘Already exists~’); return; }
+showModal(‘New Folder ✦’,
+‘<input id="fi" type="text" placeholder="Folder name…" maxlength="30">’ +
+‘<button class="mb pk" onclick="createFolder()">Create</button>’ +
+‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
+setTimeout(function() { var el=document.getElementById(‘fi’); if(el) el.focus(); }, 100);
 }
+function createFolder() {
+var el = document.getElementById(‘fi’); if (!el) return;
+var name = el.value.trim();
+if (!name) { showToast(‘Enter a name’); return; }
+for (var i = 0; i < _folders.length; i++) if (_folders[i].name === name) { showToast(‘Already exists’); return; }
 dbPut(‘folders’, { name: name }).then(function() {
-folders.push({ name: name });
-closeModal();
-renderFolderBar();
-showToast(‘📂 Created “’ + name + ‘”’);
-}).catch(function() { showToast(‘Error saving folder’); });
-}
+_folders.push({ name: name });
+closeModal(); paintStrip(); showToast(‘📂 Created “’ + name + ‘”’);
+}).catch(function() { showToast(‘Error saving’); });
 }
 
 function showMoveModal(ids, fromLb) {
-var opts = ‘’;
-for (var i = 0; i < folders.length; i++) {
-opts += ’<div class="folder-option" data-f="' + folders[i].name + '">📂 ’ + folders[i].name + ‘</div>’;
+var inner = ‘<div class="fl"><div class="fo" onclick="execMove(' + JSON.stringify(ids) + ',\'\','+ fromLb +')">🌸 All (no folder)</div>’;
+for (var i = 0; i < _folders.length; i++) {
+inner += ’<div class="fo" onclick="execMove(' + JSON.stringify(ids) + ',\'' + _folders[i].name + '\',' + fromLb + ')">📂 ’ + _folders[i].name + ‘</div>’;
 }
-openModal(‘Move to… ✦’,
-‘<div class="folder-list">’ +
-‘<div class="folder-option" data-f="">🌸 All (no folder)</div>’ +
-opts + ‘</div>’ +
-‘<button class="modal-btn secondary" id="mv-cancel">Cancel</button>’);
-document.getElementById(‘mv-cancel’).onclick = closeModal;
-
-var optEls = document.querySelectorAll(’.folder-option’);
-for (var j = 0; j < optEls.length; j++) {
-(function(opt) {
-opt.onclick = function() {
-var target = opt.getAttribute(‘data-f’);
-var idx = 0;
-function moveNext() {
-if (idx >= ids.length) {
-closeModal();
-if (fromLb) {
-document.getElementById(‘lightbox’).classList.remove(‘open’);
-lightboxId = null;
-} else {
-exitSelect();
+inner += ‘</div><button class="mb gy" onclick="closeModal()">Cancel</button>’;
+showModal(‘Move to… ✦’, inner);
 }
-showToast(’📂 Moved ’ + ids.length);
-renderGrid();
-return;
-}
-dbGet(‘memes’, ids[idx]).then(function(m) {
-if (m) {
-m.folder = target;
-return dbPut(‘memes’, m);
-}
-}).then(function() {
-idx++;
-moveNext();
-}).catch(function() { idx++; moveNext(); });
-}
-moveNext();
-};
-})(optEls[j]);
-}
-}
-
-function showFolderOptions(name) {
-openModal(’”’ + name + ‘”’,
-‘<button class="modal-btn secondary" id="fo-rename">✏️ Rename</button>’ +
-‘<button class="modal-btn danger" id="fo-delete">🗑 Delete Folder</button>’ +
-‘<button class="modal-btn secondary" id="fo-cancel">Cancel</button>’);
-document.getElementById(‘fo-cancel’).onclick = closeModal;
-document.getElementById(‘fo-rename’).onclick = function() { closeModal(); showRenameModal(name); };
-document.getElementById(‘fo-delete’).onclick = function() {
-dbGetAll(‘memes’, ‘folder’, name).then(function(all) {
-all = all || [];
+function execMove(ids, target, fromLb) {
 var i = 0;
-function clearNext() {
-if (i >= all.length) {
-return dbDel(‘folders’, name);
-}
-all[i].folder = ‘’;
-return dbPut(‘memes’, all[i]).then(function() { i++; return clearNext(); });
-}
-return clearNext();
-}).then(function() {
-folders = folders.filter(function(f) { return f.name !== name; });
-if (currentFolder === name) currentFolder = ‘all’;
+function nx() {
+if (i >= ids.length) {
 closeModal();
-renderFolderBar();
-renderGrid();
-showToast(‘🗑 Folder deleted’);
-}).catch(function() { showToast(‘Error deleting folder’); });
-};
+if (fromLb) closeLB(); else exitSel();
+showToast(’📂 Moved ’ + ids.length);
+loadGrid(); return;
+}
+dbGet(‘memes’, ids[i]).then(function(m) {
+if (m) { m.folder = target; return dbPut(‘memes’, m); }
+}).then(function() { i++; nx(); }).catch(function() { i++; nx(); });
+}
+nx();
 }
 
-function showRenameModal(oldName) {
-openModal(‘Rename ✦’,
-‘<input class="modal-input" id="rn-input" type="text" value="' + oldName + '" maxlength="30">’ +
-‘<button class="modal-btn primary" id="rn-ok">Save</button>’ +
-‘<button class="modal-btn secondary" id="rn-cancel">Cancel</button>’);
-var inp = document.getElementById(‘rn-input’);
-setTimeout(function() { inp.focus(); inp.select(); }, 80);
-document.getElementById(‘rn-cancel’).onclick = closeModal;
-document.getElementById(‘rn-ok’).onclick = function() {
-var nw = inp.value.trim();
-if (!nw || nw === oldName) { closeModal(); return; }
-for (var i = 0; i < folders.length; i++) {
-if (folders[i].name === nw) { showToast(‘Name taken~’); return; }
+function showFolderOpts(name) {
+showModal(’”’ + name + ‘”’,
+‘<button class="mb gy" onclick="closeModal();showRenameModal(\'' + name + '\')">✏️ Rename</button>’ +
+‘<button class="mb rd" onclick="deleteFolder(\'' + name + '\')">🗑 Delete Folder</button>’ +
+‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
 }
-dbDel(‘folders’, oldName).then(function() {
+function deleteFolder(name) {
+dbAll(‘memes’, ‘folder’, name).then(function(rows) {
+rows = rows || [];
+var i = 0;
+function clr() {
+if (i >= rows.length) return dbDel(‘folders’, name);
+rows[i].folder = ‘’;
+return dbPut(‘memes’, rows[i]).then(function() { i++; return clr(); });
+}
+return clr();
+}).then(function() {
+_folders = _folders.filter(function(f) { return f.name !== name; });
+if (_curF === name) _curF = ‘all’;
+closeModal(); paintStrip(); loadGrid(); showToast(‘🗑 Folder deleted’);
+}).catch(function() { showToast(‘Error’); });
+}
+function showRenameModal(old) {
+showModal(‘Rename ✦’,
+‘<input id="ri" type="text" value="' + old + '" maxlength="30">’ +
+‘<button class="mb pk" onclick="execRename(\'' + old + '\')">Save</button>’ +
+‘<button class="mb gy" onclick="closeModal()">Cancel</button>’);
+setTimeout(function() { var el=document.getElementById(‘ri’); if(el){el.focus();el.select();} }, 100);
+}
+function execRename(old) {
+var el = document.getElementById(‘ri’); if (!el) return;
+var nw = el.value.trim();
+if (!nw || nw === old) { closeModal(); return; }
+for (var i = 0; i < _folders.length; i++) if (_folders[i].name === nw) { showToast(‘Name taken’); return; }
+dbDel(‘folders’, old).then(function() {
 return dbPut(‘folders’, { name: nw });
 }).then(function() {
-return dbGetAll(‘memes’, ‘folder’, oldName);
-}).then(function(all) {
-all = all || [];
-var i = 0;
-function updateNext() {
-if (i >= all.length) return Promise.resolve();
-all[i].folder = nw;
-return dbPut(‘memes’, all[i]).then(function() { i++; return updateNext(); });
+return dbAll(‘memes’, ‘folder’, old);
+}).then(function(rows) {
+rows = rows || []; var i = 0;
+function upd() {
+if (i >= rows.length) return Promise.resolve();
+rows[i].folder = nw;
+return dbPut(‘memes’, rows[i]).then(function() { i++; return upd(); });
 }
-return updateNext();
+return upd();
 }).then(function() {
-folders = folders.filter(function(f) { return f.name !== oldName; });
-folders.push({ name: nw });
-if (currentFolder === oldName) currentFolder = nw;
-closeModal();
-renderFolderBar();
-renderGrid();
-showToast(‘✓ Renamed to “’ + nw + ‘”’);
-}).catch(function() { showToast(‘Error renaming’); });
-};
+_folders = _folders.filter(function(f) { return f.name !== old; });
+_folders.push({ name: nw });
+if (_curF === old) _curF = nw;
+closeModal(); paintStrip(); loadGrid(); showToast(‘✓ Renamed’);
+}).catch(function() { showToast(‘Error’); });
 }
 
-// ── TOAST ─────────────────────────────────────────────────────────────
-var toastT;
+// ─── TOAST ────────────────────────────────────────────────────────────
 function showToast(msg) {
 var t = document.getElementById(‘toast’);
-t.textContent = msg;
-t.classList.add(‘show’);
-clearTimeout(toastT);
-toastT = setTimeout(function() { t.classList.remove(‘show’); }, 2400);
+t.textContent = msg; t.className = ‘show’;
+clearTimeout(_toastT);
+_toastT = setTimeout(function() { t.className = ‘’; }, 2600);
 }
 
-// ── START ─────────────────────────────────────────────────────────────
-init();
+// ─── RESIZE ───────────────────────────────────────────────────────────
+window.addEventListener(‘resize’, measureLayout);
+window.addEventListener(‘orientationchange’, function() {
+setTimeout(measureLayout, 200);
+});
+
+// ─── START ────────────────────────────────────────────────────────────
+window.onload = boot;
 </script>
 
 </body>
