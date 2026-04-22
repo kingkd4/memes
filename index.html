@@ -5,25 +5,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MemeVault">
-<meta name="theme-color" content="#0a0a0f">
-<title>MemeVault</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Meme Box">
+<meta name="theme-color" content="#fdf0f5">
+<title>Meme Box ✿</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c28;
-    --border: #2a2a3d;
-    --accent: #7fff6e;
-    --accent2: #ff6ef7;
-    --text: #e8e8f0;
-    --muted: #6b6b85;
-    --radius: 14px;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bot: env(safe-area-inset-bottom, 0px);
+    --bg:        #fdf0f5;
+    --bg2:       #fff5f9;
+    --surface:   #ffffff;
+    --border:    #f0d6e4;
+    --border2:   #e8c4d8;
+    --pink:      #f4a7c3;
+    --pink-deep: #e07fa8;
+    --lilac:     #c9b8e8;
+    --mint:      #b8e4d8;
+    --peach:     #f7c9a8;
+    --text:      #4a3040;
+    --muted:     #a8849a;
+    --light:     #c8a0b8;
+    --radius:    18px;
+    --safe-top:  env(safe-area-inset-top, 0px);
+    --safe-bot:  env(safe-area-inset-bottom, 20px);
   }
 
 - { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -32,878 +37,1086 @@ html, body {
 height: 100%; width: 100%;
 background: var(–bg);
 color: var(–text);
-font-family: ‘Space Mono’, monospace;
+font-family: ‘DM Sans’, sans-serif;
 overflow: hidden;
 position: fixed;
+-webkit-font-smoothing: antialiased;
+}
+
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background-image: radial-gradient(circle, rgba(232,196,216,0.5) 1px, transparent 1px);
+background-size: 22px 22px;
+pointer-events: none;
+z-index: 0;
+}
+
+.blob1 {
+position: fixed; top: -60px; right: -60px;
+width: 200px; height: 200px;
+background: -webkit-radial-gradient(circle, rgba(201,184,232,0.28), transparent 70%);
+background: radial-gradient(circle, rgba(201,184,232,0.28), transparent 70%);
+border-radius: 50%;
+pointer-events: none; z-index: 0;
+}
+.blob2 {
+position: fixed; bottom: 10%; left: -80px;
+width: 240px; height: 240px;
+background: -webkit-radial-gradient(circle, rgba(184,228,216,0.22), transparent 70%);
+background: radial-gradient(circle, rgba(184,228,216,0.22), transparent 70%);
+border-radius: 50%;
+pointer-events: none; z-index: 0;
 }
 
 #app {
+display: -webkit-flex;
 display: flex;
+-webkit-flex-direction: column;
 flex-direction: column;
 height: 100%;
 padding-top: var(–safe-top);
-padding-bottom: var(–safe-bot);
+position: relative;
+z-index: 1;
 }
 
 /* HEADER */
 .header {
+display: -webkit-flex;
 display: flex;
+-webkit-align-items: center;
 align-items: center;
+-webkit-justify-content: space-between;
 justify-content: space-between;
-padding: 14px 18px 10px;
-border-bottom: 1px solid var(–border);
-background: var(–bg);
+padding: 14px 18px 12px;
+background: rgba(253,240,245,0.9);
+-webkit-backdrop-filter: blur(16px);
+backdrop-filter: blur(16px);
 flex-shrink: 0;
 gap: 10px;
+border-bottom: 1.5px solid var(–border);
 }
 
-.header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-
-.back-btn {
-background: none; border: none; color: var(–accent);
-font-family: ‘Space Mono’, monospace; font-size: 18px;
-cursor: pointer; padding: 4px 2px; flex-shrink: 0;
-display: none;
+.logo-wrap {
+display: -webkit-flex;
+display: flex;
+-webkit-align-items: center;
+align-items: center;
+gap: 8px;
 }
+
+.logo-flower {
+font-size: 22px;
+display: inline-block;
+-webkit-animation: spin-slow 10s linear infinite;
+animation: spin-slow 10s linear infinite;
+}
+@-webkit-keyframes spin-slow { 0%{-webkit-transform:rotate(0deg)} 100%{-webkit-transform:rotate(360deg)} }
+@keyframes spin-slow { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
 
 .logo {
-font-family: ‘Syne’, sans-serif; font-weight: 800;
-font-size: 22px; letter-spacing: -0.5px;
-background: linear-gradient(135deg, var(–accent), var(–accent2));
--webkit-background-clip: text; -webkit-text-fill-color: transparent;
-white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+font-family: ‘Playfair Display’, serif;
+font-weight: 700;
+font-size: 22px;
+color: var(–pink-deep);
+letter-spacing: -0.3px;
 }
 
-.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.header-actions {
+display: -webkit-flex;
+display: flex;
+gap: 8px;
+flex-shrink: 0;
+}
 
 .icon-btn {
-background: var(–surface2); border: 1px solid var(–border);
-color: var(–text); width: 38px; height: 38px; border-radius: 10px;
-display: flex; align-items: center; justify-content: center;
-cursor: pointer; font-size: 17px; flex-shrink: 0;
-transition: background 0.15s, transform 0.1s;
+background: var(–surface);
+border: 1.5px solid var(–border);
+color: var(–muted);
+width: 40px; height: 40px;
+border-radius: 50%;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+cursor: pointer;
+font-size: 16px;
+flex-shrink: 0;
+box-shadow: 0 2px 8px rgba(240,160,195,0.15);
+-webkit-transition: -webkit-transform 0.12s;
+transition: transform 0.12s;
 }
-.icon-btn:active { transform: scale(0.92); background: var(–border); }
-.icon-btn.accent { background: var(–accent); color: #000; border-color: var(–accent); }
+.icon-btn:active { -webkit-transform: scale(0.88); transform: scale(0.88); }
+
+.add-btn {
+background: -webkit-linear-gradient(135deg, var(–pink), var(–pink-deep));
+background: linear-gradient(135deg, var(–pink), var(–pink-deep));
+border: none; color: white;
+width: 40px; height: 40px;
+border-radius: 50%;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+font-size: 22px; cursor: pointer;
+box-shadow: 0 4px 14px rgba(224,127,168,0.4);
+-webkit-transition: -webkit-transform 0.12s;
+transition: transform 0.12s;
+flex-shrink: 0;
+}
+.add-btn:active { -webkit-transform: scale(0.88); transform: scale(0.88); }
+
+#upload-input { display: none; }
 
 /* FOLDER BAR */
 .folder-bar {
-display: flex; align-items: center; gap: 8px;
-padding: 10px 18px 8px; overflow-x: auto;
-flex-shrink: 0; scrollbar-width: none;
+display: -webkit-flex;
+display: flex;
+-webkit-align-items: center;
+align-items: center;
+gap: 8px;
+padding: 10px 18px;
+overflow-x: auto;
+flex-shrink: 0;
+scrollbar-width: none;
+background: rgba(253,245,249,0.8);
 border-bottom: 1px solid var(–border);
 }
 .folder-bar::-webkit-scrollbar { display: none; }
 
 .folder-chip {
-display: flex; align-items: center; gap: 6px;
-background: var(–surface); border: 1px solid var(–border);
-border-radius: 20px; padding: 5px 12px 5px 10px;
-font-family: ‘Space Mono’, monospace; font-size: 11px;
-color: var(–muted); white-space: nowrap; cursor: pointer;
-transition: all 0.15s; flex-shrink: 0;
+display: -webkit-inline-flex;
+display: inline-flex;
+-webkit-align-items: center;
+align-items: center;
+gap: 5px;
+background: var(–surface);
+border: 1.5px solid var(–border);
+border-radius: 30px;
+padding: 6px 13px 6px 11px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 12px;
+font-weight: 500;
+color: var(–muted);
+white-space: nowrap;
+cursor: pointer;
+flex-shrink: 0;
+-webkit-transition: all 0.15s;
+transition: all 0.15s;
+box-shadow: 0 1px 4px rgba(240,160,195,0.1);
 }
 .folder-chip.active {
-background: var(–surface2); border-color: var(–accent);
-color: var(–accent);
+background: -webkit-linear-gradient(135deg, var(–pink), var(–lilac));
+background: linear-gradient(135deg, var(–pink), var(–lilac));
+border-color: transparent;
+color: white;
+box-shadow: 0 3px 12px rgba(240,160,195,0.35);
 }
 .folder-chip .chip-count {
-background: var(–border); border-radius: 10px;
-padding: 1px 6px; font-size: 10px; color: var(–muted);
+background: rgba(255,255,255,0.3);
+border-radius: 10px;
+padding: 1px 6px;
+font-size: 10px;
 }
-.folder-chip.active .chip-count { background: var(–accent); color: #000; }
+.folder-chip:not(.active) .chip-count {
+background: var(–bg);
+color: var(–muted);
+}
 
 .new-folder-btn {
-background: none; border: 1px dashed var(–border);
-border-radius: 20px; padding: 5px 12px;
-color: var(–muted); font-family: ‘Space Mono’, monospace;
-font-size: 11px; cursor: pointer; white-space: nowrap;
-flex-shrink: 0; transition: all 0.15s;
+background: none;
+border: 1.5px dashed var(–border2);
+border-radius: 30px;
+padding: 6px 13px;
+color: var(–light);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 12px;
+font-weight: 500;
+cursor: pointer;
+white-space: nowrap;
+flex-shrink: 0;
+-webkit-transition: all 0.15s;
+transition: all 0.15s;
 }
-.new-folder-btn:active { border-color: var(–accent); color: var(–accent); }
+.new-folder-btn:active { border-color: var(–pink); color: var(–pink); }
+
+/* COUNT */
+.count-label {
+font-size: 11px;
+color: var(–light);
+padding: 4px 20px 4px;
+font-style: italic;
+font-family: ‘Playfair Display’, serif;
+flex-shrink: 0;
+}
 
 /* GRID */
 .grid-container {
-flex: 1; overflow-y: auto; overflow-x: hidden;
-padding: 12px; scrollbar-width: none;
+-webkit-flex: 1;
+flex: 1;
+overflow-y: auto;
+overflow-x: hidden;
+padding: 10px 12px calc(90px + var(–safe-bot));
+scrollbar-width: none;
+-webkit-overflow-scrolling: touch;
 }
 .grid-container::-webkit-scrollbar { display: none; }
 
 .grid {
 display: grid;
 grid-template-columns: repeat(3, 1fr);
-gap: 6px;
+gap: 8px;
 }
 
 .meme-card {
-position: relative; aspect-ratio: 1;
-border-radius: 10px; overflow: hidden;
-background: var(–surface); cursor: pointer;
-border: 2px solid transparent;
+position: relative;
+aspect-ratio: 1 / 1;
+border-radius: 14px;
+overflow: hidden;
+background: var(–surface);
+cursor: pointer;
+border: 2.5px solid transparent;
+box-shadow: 0 2px 10px rgba(200,140,180,0.12);
+-webkit-transition: -webkit-transform 0.15s, border-color 0.15s;
 transition: transform 0.15s, border-color 0.15s;
 }
-.meme-card:active { transform: scale(0.95); }
-.meme-card.selected { border-color: var(–accent2); }
+.meme-card:active { -webkit-transform: scale(0.93); transform: scale(0.93); }
+.meme-card.selected {
+border-color: var(–pink-deep);
+box-shadow: 0 0 0 3px rgba(224,127,168,0.25);
+}
 .meme-card img {
 width: 100%; height: 100%;
 object-fit: cover; display: block;
 }
 .meme-card .sel-badge {
-position: absolute; top: 5px; right: 5px;
+position: absolute; top: 6px; right: 6px;
 width: 22px; height: 22px; border-radius: 50%;
-background: var(–accent2); display: none;
-align-items: center; justify-content: center;
-font-size: 12px; color: #000; font-weight: bold;
+background: var(–pink-deep);
+display: none;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+font-size: 12px; color: white;
+box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-.meme-card.selected .sel-badge { display: flex; }
+.meme-card.selected .sel-badge { display: -webkit-flex; display: flex; }
 
-/* EMPTY STATE */
+/* EMPTY */
 .empty {
-display: flex; flex-direction: column;
-align-items: center; justify-content: center;
-padding: 60px 30px; text-align: center; gap: 12px;
+display: -webkit-flex; display: flex;
+-webkit-flex-direction: column; flex-direction: column;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+padding: 60px 30px;
+text-align: center;
+gap: 12px;
+grid-column: 1 / -1;
 }
-.empty-icon { font-size: 52px; opacity: 0.4; }
+.empty-flower {
+font-size: 48px;
+-webkit-animation: float 3s ease-in-out infinite;
+animation: float 3s ease-in-out infinite;
+}
+@-webkit-keyframes float { 0%,100%{-webkit-transform:translateY(0)} 50%{-webkit-transform:translateY(-8px)} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
 .empty-title {
-font-family: ‘Syne’, sans-serif; font-weight: 700;
-font-size: 18px; color: var(–muted);
+font-family: ‘Playfair Display’, serif;
+font-style: italic;
+font-size: 20px;
+color: var(–light);
 }
-.empty-sub { font-size: 11px; color: var(–muted); line-height: 1.6; }
+.empty-sub { font-size: 13px; color: var(–light); line-height: 1.7; }
 
 /* SELECTION BAR */
 .sel-bar {
-position: fixed; bottom: calc(var(–safe-bot) + 12px);
-left: 50%; transform: translateX(-50%);
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 22px; padding: 8px 12px;
-display: none; align-items: center; gap: 8px;
-box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+position: fixed;
+bottom: calc(var(–safe-bot) + 16px);
+left: 50%;
+-webkit-transform: translateX(-50%) translateY(120px);
+transform: translateX(-50%) translateY(120px);
+background: white;
+border: 1.5px solid var(–border);
+border-radius: 30px;
+padding: 8px 10px;
+display: -webkit-flex;
+display: flex;
+-webkit-align-items: center;
+align-items: center;
+gap: 6px;
+box-shadow: 0 8px 32px rgba(200,140,180,0.28);
 z-index: 100;
+-webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+white-space: nowrap;
 }
-.sel-bar.visible { display: flex; }
+.sel-bar.visible {
+-webkit-transform: translateX(-50%) translateY(0);
+transform: translateX(-50%) translateY(0);
+}
 
 .sel-action {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: 14px; padding: 7px 14px;
-color: var(–text); font-family: ‘Space Mono’, monospace;
-font-size: 11px; cursor: pointer; display: flex;
-align-items: center; gap: 6px; white-space: nowrap;
+background: var(–bg);
+border: 1.5px solid var(–border);
+border-radius: 20px;
+padding: 7px 13px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 12px; font-weight: 500;
+cursor: pointer;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+gap: 5px;
+-webkit-appearance: none;
 }
 .sel-action:active { background: var(–border); }
-.sel-action.danger { color: #ff6e6e; border-color: #ff6e6e33; }
-.sel-action.success { color: var(–accent); border-color: var(–accent); background: rgba(127,255,110,0.08); }
+.sel-action.danger { color: #d46080; border-color: #f0c0d0; background: #fff5f7; }
+.sel-action.cancel { color: var(–muted); }
+
+/* LIGHTBOX */
+.lightbox {
+position: fixed; inset: 0;
+background: rgba(253,240,245,0.97);
+-webkit-backdrop-filter: blur(20px);
+backdrop-filter: blur(20px);
+z-index: 300;
+display: none;
+-webkit-flex-direction: column;
+flex-direction: column;
+-webkit-align-items: center;
+align-items: center;
+}
+.lightbox.open { display: -webkit-flex; display: flex; }
+
+.lb-header {
+display: -webkit-flex; display: flex;
+width: 100%;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: space-between; justify-content: space-between;
+padding: calc(var(–safe-top) + 14px) 18px 10px;
+flex-shrink: 0;
+}
+
+.lb-close {
+background: var(–surface);
+border: 1.5px solid var(–border);
+border-radius: 50%;
+width: 38px; height: 38px;
+color: var(–muted); font-size: 18px;
+cursor: pointer;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+-webkit-appearance: none;
+}
+.lb-close:active { background: var(–border); }
+
+.lb-folder-tag {
+font-family: ‘Playfair Display’, serif;
+font-style: italic; font-size: 13px;
+color: var(–muted);
+}
+
+.lb-img-wrap {
+-webkit-flex: 1; flex: 1;
+width: 100%;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+padding: 0 16px;
+overflow: hidden;
+}
+.lb-img-wrap img {
+max-width: 100%; max-height: 100%;
+object-fit: contain;
+border-radius: 16px;
+box-shadow: 0 8px 40px rgba(200,140,180,0.22);
+/* Allow long-press save on iOS */
+-webkit-user-select: auto;
+user-select: auto;
+pointer-events: auto;
+}
+
+.lb-hint {
+font-size: 11px; color: var(–light);
+text-align: center;
+padding: 8px 20px 4px;
+font-style: italic;
+font-family: ‘Playfair Display’, serif;
+flex-shrink: 0;
+}
+
+.lb-actions {
+display: -webkit-flex; display: flex;
+gap: 10px;
+padding: 10px 20px calc(16px + var(–safe-bot));
+width: 100%;
+-webkit-justify-content: center; justify-content: center;
+flex-shrink: 0;
+}
+
+.lb-btn {
+-webkit-flex: 1; flex: 1;
+max-width: 150px;
+background: var(–surface);
+border: 1.5px solid var(–border);
+border-radius: 18px;
+padding: 13px 10px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 13px; font-weight: 500;
+cursor: pointer;
+text-align: center;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+gap: 6px;
+box-shadow: 0 2px 8px rgba(200,140,180,0.1);
+-webkit-appearance: none;
+}
+.lb-btn:active { background: var(–bg); }
+.lb-btn.primary {
+background: -webkit-linear-gradient(135deg, var(–pink), var(–pink-deep));
+background: linear-gradient(135deg, var(–pink), var(–pink-deep));
+color: white; border: none;
+box-shadow: 0 4px 16px rgba(224,127,168,0.4);
+}
+.lb-btn.del { color: #d46080; border-color: #f0c0d0; background: #fff5f7; }
 
 /* MODAL */
 .modal-overlay {
-position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-z-index: 200; display: flex; align-items: flex-end;
-opacity: 0; pointer-events: none; transition: opacity 0.2s;
+position: fixed; inset: 0;
+background: rgba(74,48,64,0.35);
+z-index: 200;
+display: -webkit-flex; display: flex;
+-webkit-align-items: flex-end; align-items: flex-end;
+opacity: 0; pointer-events: none;
+-webkit-transition: opacity 0.2s;
+transition: opacity 0.2s;
 }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 
 .modal {
-background: var(–surface); border-radius: var(–radius) var(–radius) 0 0;
-width: 100%; padding: 20px 20px calc(20px + var(–safe-bot));
-transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
-border-top: 1px solid var(–border);
+background: white;
+border-radius: 26px 26px 0 0;
+width: 100%;
+padding: 8px 20px calc(24px + var(–safe-bot));
+-webkit-transform: translateY(100%);
+transform: translateY(100%);
+-webkit-transition: -webkit-transform 0.28s cubic-bezier(0.32,0.72,0,1);
+transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
+border-top: 1.5px solid var(–border);
 }
-.modal-overlay.open .modal { transform: translateY(0); }
+.modal-overlay.open .modal {
+-webkit-transform: translateY(0);
+transform: translateY(0);
+}
+
+.modal-pill {
+width: 36px; height: 4px;
+background: var(–border);
+border-radius: 2px;
+margin: 10px auto 16px;
+}
 
 .modal-title {
-font-family: ‘Syne’, sans-serif; font-weight: 700;
-font-size: 17px; margin-bottom: 16px; text-align: center;
+font-family: ‘Playfair Display’, serif;
+font-weight: 700; font-style: italic;
+font-size: 19px;
+color: var(–pink-deep);
+margin-bottom: 16px;
+text-align: center;
 }
 
 .modal-input {
-width: 100%; background: var(–surface2); border: 1px solid var(–border);
-border-radius: 10px; padding: 12px 14px;
-color: var(–text); font-family: ‘Space Mono’, monospace;
-font-size: 14px; outline: none; margin-bottom: 12px;
+width: 100%;
+background: var(–bg);
+border: 1.5px solid var(–border);
+border-radius: 14px;
+padding: 13px 16px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 15px;
+outline: none;
+margin-bottom: 12px;
+-webkit-appearance: none;
+display: block;
 }
-.modal-input:focus { border-color: var(–accent); }
+.modal-input:focus { border-color: var(–pink); }
 
 .modal-btn {
-width: 100%; padding: 13px;
-border-radius: 12px; border: none; cursor: pointer;
-font-family: ‘Syne’, sans-serif; font-weight: 700;
-font-size: 15px; margin-bottom: 8px;
-transition: transform 0.1s;
+width: 100%;
+padding: 14px;
+border-radius: 16px;
+border: none;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+font-weight: 500;
+font-size: 15px;
+margin-bottom: 8px;
+-webkit-appearance: none;
+display: block;
+text-align: center;
 }
-.modal-btn:active { transform: scale(0.97); }
-.modal-btn.primary { background: var(–accent); color: #000; }
-.modal-btn.secondary { background: var(–surface2); color: var(–text); border: 1px solid var(–border); }
+.modal-btn:active { opacity: 0.82; }
+.modal-btn.primary {
+background: -webkit-linear-gradient(135deg, var(–pink), var(–pink-deep));
+background: linear-gradient(135deg, var(–pink), var(–pink-deep));
+color: white;
+box-shadow: 0 4px 14px rgba(224,127,168,0.32);
+}
+.modal-btn.secondary {
+background: var(–bg);
+color: var(–muted);
+border: 1.5px solid var(–border);
+}
+.modal-btn.danger {
+background: #fff0f3;
+color: #d46080;
+border: 1.5px solid #f0c0d0;
+}
 
-/* LIGHTBOX */
-.lightbox {
-position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-z-index: 300; display: none; flex-direction: column;
-align-items: center; justify-content: center;
-padding: 0;
-}
-.lightbox.open { display: flex; }
-
-.lb-img-wrap {
-flex: 1; width: 100%; display: flex;
-align-items: center; justify-content: center;
-overflow: hidden; padding: 60px 0 0;
-}
-.lb-img-wrap img {
-max-width: 100%; max-height: 100%;
-object-fit: contain; border-radius: 8px;
+.folder-list {
+display: -webkit-flex; display: flex;
+-webkit-flex-direction: column; flex-direction: column;
+gap: 7px;
+max-height: 220px;
+overflow-y: auto;
+margin-bottom: 12px;
+-webkit-overflow-scrolling: touch;
 }
 
-.lb-actions {
-display: flex; gap: 10px; padding: 16px 20px calc(16px + var(–safe-bot));
-width: 100%; justify-content: center;
+.folder-option {
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+gap: 10px;
+background: var(–bg);
+border: 1.5px solid var(–border);
+border-radius: 14px;
+padding: 12px 14px;
+cursor: pointer;
+font-size: 14px;
+font-family: ‘DM Sans’, sans-serif;
+-webkit-transition: border-color 0.15s;
+transition: border-color 0.15s;
 }
-.lb-btn {
-flex: 1; max-width: 160px;
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 14px; padding: 12px;
-color: var(–text); font-family: ‘Space Mono’, monospace;
-font-size: 12px; cursor: pointer; text-align: center;
-display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.lb-btn:active { background: var(–border); }
-.lb-btn.primary { background: var(–accent); color: #000; border-color: var(–accent); font-weight: bold; }
-
-.lb-close {
-position: absolute; top: calc(var(–safe-top) + 12px); right: 16px;
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 50%; width: 36px; height: 36px;
-color: var(–text); font-size: 18px; cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-z-index: 10;
-}
+.folder-option:active { border-color: var(–pink); background: #fff5f8; }
 
 /* TOAST */
 .toast {
-position: fixed; top: calc(var(–safe-top) + 60px);
-left: 50%; transform: translateX(-50%) translateY(-10px);
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 20px; padding: 8px 18px;
-font-size: 12px; color: var(–text);
-opacity: 0; transition: opacity 0.2s, transform 0.2s;
-pointer-events: none; z-index: 500; white-space: nowrap;
+position: fixed;
+top: calc(var(–safe-top) + 66px);
+left: 50%;
+-webkit-transform: translateX(-50%) translateY(-6px);
+transform: translateX(-50%) translateY(-6px);
+background: white;
+border: 1.5px solid var(–border);
+border-radius: 30px;
+padding: 9px 20px;
+font-size: 13px;
+font-family: ‘DM Sans’, sans-serif;
+color: var(–text);
+box-shadow: 0 4px 20px rgba(200,140,180,0.2);
+opacity: 0;
+-webkit-transition: opacity 0.2s, -webkit-transform 0.2s;
+transition: opacity 0.2s, transform 0.2s;
+pointer-events: none;
+z-index: 500;
+white-space: nowrap;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* FOLDER SELECT in modal */
-.folder-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
-.folder-option {
-display: flex; align-items: center; gap: 10px;
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 10px; padding: 10px 14px; cursor: pointer;
-font-size: 13px; transition: border-color 0.15s;
-}
-.folder-option:active { border-color: var(–accent); }
-.folder-option.selected-opt { border-color: var(–accent); color: var(–accent); }
-
-/* UPLOAD BUTTON SPECIAL */
-#upload-input { display: none; }
-
-.count-label {
-font-size: 10px; color: var(–muted);
-padding: 0 18px 8px; flex-shrink: 0;
-}
-
-/* LONG PRESS indicator */
-.meme-card::after {
-content: ‘’; position: absolute; inset: 0;
-background: rgba(127,255,110,0); transition: background 0.1s;
-border-radius: 8px;
+.toast.show {
+opacity: 1;
+-webkit-transform: translateX(-50%) translateY(0);
+transform: translateX(-50%) translateY(0);
 }
 </style>
 
 </head>
 <body>
+<div class="blob1"></div>
+<div class="blob2"></div>
+
 <div id="app">
-  <!-- HEADER -->
   <div class="header">
-    <div class="header-left">
-      <button class="back-btn" id="back-btn">←</button>
-      <div class="logo" id="header-title">MemeVault</div>
+    <div class="logo-wrap">
+      <span class="logo-flower">🌸</span>
+      <span class="logo">Meme Box</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="select-btn" title="Select">☑</button>
-      <label class="icon-btn accent" title="Add memes">
-        <span>＋</span>
+      <button class="icon-btn" id="select-btn">☑️</button>
+      <label class="add-btn">
+        <span style="line-height:1;font-size:22px">＋</span>
         <input type="file" id="upload-input" accept="image/*" multiple>
       </label>
     </div>
   </div>
 
-  <!-- FOLDER BAR -->
-
-  <div class="folder-bar" id="folder-bar">
-    <div class="folder-chip active" data-folder="all">
-      📁 All <span class="chip-count" id="count-all">0</span>
-    </div>
-    <button class="new-folder-btn" id="new-folder-btn">+ New Folder</button>
-  </div>
-
+  <div class="folder-bar" id="folder-bar"></div>
   <div class="count-label" id="count-label"></div>
-
-  <!-- GRID -->
 
   <div class="grid-container">
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- SELECTION BAR -->
-
   <div class="sel-bar" id="sel-bar">
-    <button class="sel-action" id="sel-copy">📋 Copy</button>
     <button class="sel-action" id="sel-move">📂 Move</button>
     <button class="sel-action danger" id="sel-delete">🗑 Delete</button>
-    <button class="sel-action" id="sel-cancel">✕</button>
+    <button class="sel-action cancel" id="sel-cancel">✕ Done</button>
   </div>
 </div>
 
 <!-- LIGHTBOX -->
 
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" id="lb-close">✕</button>
-  <div class="lb-img-wrap"><img id="lb-img" src="" alt=""></div>
+  <div class="lb-header">
+    <button class="lb-close" id="lb-close">✕</button>
+    <div class="lb-folder-tag" id="lb-folder-tag"></div>
+    <div style="width:38px"></div>
+  </div>
+  <div class="lb-img-wrap">
+    <img id="lb-img" src="" alt="">
+  </div>
+  <div class="lb-hint">✦ hold image to save or copy to photos</div>
   <div class="lb-actions">
-    <button class="lb-btn primary" id="lb-copy">📋 Copy</button>
-    <button class="lb-btn" id="lb-share">↑ Share</button>
-    <button class="lb-btn danger" id="lb-delete" style="color:#ff6e6e;border-color:#ff6e6e44">🗑</button>
+    <button class="lb-btn primary" id="lb-share">↑ Share</button>
+    <button class="lb-btn" id="lb-move">📂 Move</button>
+    <button class="lb-btn del" id="lb-delete">🗑 Delete</button>
   </div>
 </div>
 
 <!-- MODAL -->
 
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal">
-    <div class="modal-title" id="modal-title">New Folder</div>
+  <div class="modal">
+    <div class="modal-pill"></div>
+    <div class="modal-title" id="modal-title"></div>
     <div id="modal-body"></div>
   </div>
 </div>
 
-<!-- TOAST -->
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DB ──────────────────────────────────────────────────────────────
-const DB_NAME = 'memevault', DB_VER = 1;
-let db;
+// ── DB ──────────────────────────────────────────────────────────────
+var DB_NAME = 'memebox_v2', DB_VER = 1, db;
 
 function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
+  return new Promise(function(res, rej) {
+    var req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = function(e) {
+      var d = e.target.result;
       if (!d.objectStoreNames.contains('memes')) {
-        const s = d.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
+        var s = d.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
         s.createIndex('folder', 'folder', { unique: false });
       }
       if (!d.objectStoreNames.contains('folders')) {
         d.createObjectStore('folders', { keyPath: 'name' });
       }
     };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror = () => rej(req.error);
+    req.onsuccess = function(e) { db = e.target.result; res(); };
+    req.onerror = function() { rej(req.error); };
   });
 }
 
-function tx(store, mode = 'readonly') {
-  return db.transaction(store, mode).objectStore(store);
+function getStore(name, mode) {
+  return db.transaction(name, mode || 'readonly').objectStore(name);
 }
-
 function dbGet(store, key) {
-  return new Promise((res, rej) => { const r = tx(store).get(key); r.onsuccess = () => res(r.result); r.onerror = rej; });
+  return new Promise(function(res, rej) { var r = getStore(store).get(key); r.onsuccess = function(){ res(r.result); }; r.onerror = rej; });
 }
-
-function dbGetAll(store, index, value) {
-  return new Promise((res, rej) => {
-    let req;
-    if (index && value !== undefined) {
-      req = tx(store).index(index).getAll(value);
-    } else {
-      req = tx(store).getAll();
-    }
-    req.onsuccess = () => res(req.result);
-    req.onerror = rej;
+function dbGetAll(store, idx, val) {
+  return new Promise(function(res, rej) {
+    var r = (idx !== undefined && val !== undefined) ? getStore(store).index(idx).getAll(val) : getStore(store).getAll();
+    r.onsuccess = function(){ res(r.result); }; r.onerror = rej;
   });
 }
-
 function dbPut(store, data) {
-  return new Promise((res, rej) => {
-    const r = tx(store, 'readwrite').put(data);
-    r.onsuccess = () => res(r.result);
-    r.onerror = rej;
+  return new Promise(function(res, rej) { var r = getStore(store,'readwrite').put(data); r.onsuccess = function(){ res(r.result); }; r.onerror = rej; });
+}
+function dbDel(store, key) {
+  return new Promise(function(res, rej) { var r = getStore(store,'readwrite').delete(key); r.onsuccess = function(){ res(); }; r.onerror = rej; });
+}
+function dbCount(store, idx, val) {
+  return new Promise(function(res, rej) {
+    var r = idx ? getStore(store).index(idx).count(val) : getStore(store).count();
+    r.onsuccess = function(){ res(r.result); }; r.onerror = rej;
   });
 }
 
-function dbDelete(store, key) {
-  return new Promise((res, rej) => {
-    const r = tx(store, 'readwrite').delete(key);
-    r.onsuccess = () => res();
-    r.onerror = rej;
-  });
-}
+// ── STATE ────────────────────────────────────────────────────────────
+var currentFolder = 'all', folders = [], memes = [];
+var selecting = false, selected = {}, selCount = 0;
+var lightboxId = null;
 
-function dbCount(store, index, value) {
-  return new Promise((res, rej) => {
-    const req = index ? tx(store).index(index).count(value) : tx(store).count();
-    req.onsuccess = () => res(req.result);
-    req.onerror = rej;
-  });
-}
-
-// ─── STATE ────────────────────────────────────────────────────────────
-let currentFolder = 'all'; // 'all' or folder name
-let folders = []; // array of {name}
-let memes = [];   // current view
-let selecting = false;
-let selected = new Set();
-let lightboxId = null;
-
-// ─── INIT ─────────────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────
 async function init() {
   await openDB();
-  await loadFolders();
+  folders = await dbGetAll('folders');
+  renderFolderBar();
   await renderGrid();
 }
 
-// ─── FOLDERS ─────────────────────────────────────────────────────────
-async function loadFolders() {
-  folders = await dbGetAll('folders');
-  renderFolderBar();
-}
-
-async function createFolder(name) {
-  name = name.trim();
-  if (!name || folders.find(f => f.name === name)) return false;
-  await dbPut('folders', { name });
-  folders.push({ name });
-  renderFolderBar();
-  return true;
-}
-
+// ── FOLDERS ──────────────────────────────────────────────────────────
 function renderFolderBar() {
-  const bar = document.getElementById('folder-bar');
+  var bar = document.getElementById('folder-bar');
   bar.innerHTML = '';
-
-  // "All" chip
-  const allChip = createChip('📁 All', 'all', null);
-  bar.appendChild(allChip);
-
-  // Folder chips
-  folders.forEach(f => {
-    const chip = createChip('📂 ' + f.name, f.name, f.name);
+  bar.appendChild(makeChip('🌸 All', 'all'));
+  folders.forEach(function(f) {
+    var chip = makeChip('📂 ' + f.name, f.name);
+    var timer;
+    chip.addEventListener('touchstart', function(e) {
+      timer = setTimeout(function() { showFolderOptions(f.name); }, 600);
+    }, { passive: true });
+    chip.addEventListener('touchend', function() { clearTimeout(timer); });
+    chip.addEventListener('touchmove', function() { clearTimeout(timer); });
     bar.appendChild(chip);
   });
-
-  // New folder btn
-  const btn = document.createElement('button');
-  btn.className = 'new-folder-btn';
-  btn.textContent = '+ New Folder';
-  btn.onclick = showNewFolderModal;
-  bar.appendChild(btn);
-
+  var nb = document.createElement('button');
+  nb.className = 'new-folder-btn';
+  nb.textContent = '✦ New Folder';
+  nb.onclick = showNewFolderModal;
+  bar.appendChild(nb);
   updateCounts();
 }
 
-function createChip(label, folder, folderName) {
-  const chip = document.createElement('div');
-  chip.className = 'folder-chip' + (currentFolder === folder ? ' active' : '');
-  chip.innerHTML = `${label} <span class="chip-count" id="count-${folder || 'all'}">0</span>`;
-  chip.onclick = () => switchFolder(folder);
-  if (folderName) {
-    chip.addEventListener('pointerdown', e => {
-      const timer = setTimeout(() => showFolderOptions(folderName), 600);
-      chip.addEventListener('pointerup', () => clearTimeout(timer), { once: true });
-      chip.addEventListener('pointermove', () => clearTimeout(timer), { once: true });
-    });
-  }
-  return chip;
+function makeChip(label, folder) {
+  var c = document.createElement('div');
+  c.className = 'folder-chip' + (currentFolder === folder ? ' active' : '');
+  c.dataset.folder = folder;
+  c.innerHTML = label + ' <span class="chip-count" id="cnt-' + folder + '">0</span>';
+  c.onclick = function() { switchFolder(folder); };
+  return c;
 }
 
 async function updateCounts() {
-  const allCount = await dbCount('memes');
-  const el = document.getElementById('count-all');
-  if (el) el.textContent = allCount;
-
-  for (const f of folders) {
-    const c = await dbCount('memes', 'folder', f.name);
-    const el = document.getElementById('count-' + f.name);
-    if (el) el.textContent = c;
+  var n = await dbCount('memes');
+  var el = document.getElementById('cnt-all');
+  if (el) el.textContent = n;
+  for (var i = 0; i < folders.length; i++) {
+    var c = await dbCount('memes', 'folder', folders[i].name);
+    var fe = document.getElementById('cnt-' + folders[i].name);
+    if (fe) fe.textContent = c;
   }
 }
 
-async function switchFolder(folder) {
-  currentFolder = folder;
+async function switchFolder(f) {
+  currentFolder = f;
   exitSelect();
-  document.querySelectorAll('.folder-chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.folder === folder || (!c.dataset.folder && folder === 'all'));
-  });
-  // Re-render chips cleanly
-  renderFolderBar();
-  document.querySelector(`[data-folder="${folder}"]`);
-  // force active on right chip
-  document.querySelectorAll('.folder-chip').forEach(c => {
-    const isAll = folder === 'all' && c.textContent.includes('All');
-    const isFolder = c.textContent.includes(folder);
-    // just re-render
-  });
   renderFolderBar();
   await renderGrid();
 }
 
-// ─── GRID ─────────────────────────────────────────────────────────────
+// ── GRID ─────────────────────────────────────────────────────────────
 async function renderGrid() {
-  const grid = document.getElementById('grid');
+  var grid = document.getElementById('grid');
   grid.innerHTML = '';
+  memes = currentFolder === 'all' ? await dbGetAll('memes') : await dbGetAll('memes', 'folder', currentFolder);
+  memes.sort(function(a,b){ return b.id - a.id; });
 
-  if (currentFolder === 'all') {
-    memes = await dbGetAll('memes');
-  } else {
-    memes = await dbGetAll('memes', 'folder', currentFolder);
-  }
-
-  // sort newest first
-  memes.sort((a, b) => b.id - a.id);
-
-  const countLabel = document.getElementById('count-label');
-  countLabel.textContent = memes.length ? `${memes.length} meme${memes.length !== 1 ? 's' : ''}` : '';
+  var cl = document.getElementById('count-label');
+  cl.textContent = memes.length ? memes.length + ' meme' + (memes.length !== 1 ? 's' : '') + ' ✦' : '';
 
   if (!memes.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.style.gridColumn = '1 / -1';
-    empty.innerHTML = `
-      <div class="empty-icon">🖼️</div>
-      <div class="empty-title">No memes here yet</div>
-      <div class="empty-sub">Tap the <strong style="color:var(--accent)">＋</strong> button to<br>import from your photos</div>
-    `;
-    grid.appendChild(empty);
+    var emp = document.createElement('div');
+    emp.className = 'empty';
+    emp.innerHTML = '<div class="empty-flower">🌷</div>'
+      + '<div class="empty-title">nothing here yet~</div>'
+      + '<div class="empty-sub">tap <strong style="color:var(--pink-deep)">＋</strong> to add memes<br>from your photos</div>';
+    grid.appendChild(emp);
+    updateCounts();
     return;
   }
 
-  memes.forEach(meme => {
-    const card = document.createElement('div');
-    card.className = 'meme-card' + (selected.has(meme.id) ? ' selected' : '');
-    card.dataset.id = meme.id;
-
-    const img = document.createElement('img');
-    img.src = meme.dataUrl;
+  memes.forEach(function(m) {
+    var card = document.createElement('div');
+    card.className = 'meme-card' + (selected[m.id] ? ' selected' : '');
+    var img = document.createElement('img');
+    img.src = m.dataUrl;
     img.loading = 'lazy';
     card.appendChild(img);
-
-    const badge = document.createElement('div');
+    var badge = document.createElement('div');
     badge.className = 'sel-badge';
     badge.textContent = '✓';
     card.appendChild(badge);
 
-    // Long press for select mode
-    let pressTimer;
-    card.addEventListener('pointerdown', e => {
-      pressTimer = setTimeout(() => {
-        enterSelect();
-        toggleSelect(meme.id, card);
-      }, 500);
-    });
-    card.addEventListener('pointerup', () => clearTimeout(pressTimer));
-    card.addEventListener('pointermove', () => clearTimeout(pressTimer));
+    // Long-press to enter select
+    var timer;
+    card.addEventListener('touchstart', function() {
+      timer = setTimeout(function() { if(!selecting) enterSelect(); toggleSel(m.id, card); }, 500);
+    }, { passive: true });
+    card.addEventListener('touchend', function() { clearTimeout(timer); });
+    card.addEventListener('touchmove', function() { clearTimeout(timer); });
 
-    card.addEventListener('click', e => {
-      if (selecting) {
-        toggleSelect(meme.id, card);
-      } else {
-        openLightbox(meme.id);
-      }
+    card.addEventListener('click', function() {
+      if (selecting) { toggleSel(m.id, card); }
+      else { openLightbox(m.id); }
     });
-
     grid.appendChild(card);
   });
-
   updateCounts();
 }
 
-// ─── SELECTION ────────────────────────────────────────────────────────
+// ── SELECT ────────────────────────────────────────────────────────────
 function enterSelect() {
-  selecting = true;
-  selected.clear();
-  document.getElementById('select-btn').style.color = 'var(--accent)';
-  updateSelBar();
+  selecting = true; selected = {}; selCount = 0;
+  document.getElementById('sel-bar').classList.add('visible');
 }
-
 function exitSelect() {
-  selecting = false;
-  selected.clear();
-  document.querySelectorAll('.meme-card.selected').forEach(c => c.classList.remove('selected'));
-  document.getElementById('select-btn').style.color = '';
+  selecting = false; selected = {}; selCount = 0;
+  document.querySelectorAll('.meme-card.selected').forEach(function(c){ c.classList.remove('selected'); });
   document.getElementById('sel-bar').classList.remove('visible');
 }
-
-function toggleSelect(id, card) {
-  if (selected.has(id)) { selected.delete(id); card.classList.remove('selected'); }
-  else { selected.add(id); card.classList.add('selected'); }
-  updateSelBar();
+function toggleSel(id, card) {
+  if (selected[id]) { delete selected[id]; selCount--; card.classList.remove('selected'); }
+  else { selected[id] = true; selCount++; card.classList.add('selected'); }
 }
+function getSelIds() { return Object.keys(selected).map(function(k){ return parseInt(k,10); }); }
 
-function updateSelBar() {
-  const bar = document.getElementById('sel-bar');
-  if (selecting && selected.size > 0) {
-    bar.classList.add('visible');
-  } else if (selecting) {
-    bar.classList.add('visible');
-  } else {
-    bar.classList.remove('visible');
-  }
-}
-
-document.getElementById('select-btn').onclick = () => {
-  if (selecting) exitSelect();
-  else enterSelect();
+document.getElementById('select-btn').onclick = function() { if(selecting) exitSelect(); else enterSelect(); };
+document.getElementById('sel-cancel').onclick = exitSelect;
+document.getElementById('sel-delete').onclick = async function() {
+  var ids = getSelIds(); if(!ids.length) return;
+  for(var i=0;i<ids.length;i++) await dbDel('memes', ids[i]);
+  showToast('🗑 Deleted ' + ids.length);
+  exitSelect(); await renderGrid();
+};
+document.getElementById('sel-move').onclick = function() {
+  var ids = getSelIds(); if(!ids.length) return;
+  showMoveModal(ids, false);
 };
 
-// ─── UPLOAD ───────────────────────────────────────────────────────────
-document.getElementById('upload-input').addEventListener('change', async e => {
-  const files = Array.from(e.target.files);
-  if (!files.length) return;
-
-  let count = 0;
-  for (const file of files) {
-    const dataUrl = await fileToDataUrl(file);
-    const folder = currentFolder === 'all' ? '' : currentFolder;
-    await dbPut('memes', { dataUrl, folder, name: file.name, added: Date.now() });
+// ── UPLOAD ────────────────────────────────────────────────────────────
+document.getElementById('upload-input').addEventListener('change', async function(e) {
+  var files = Array.from(e.target.files); if(!files.length) return;
+  var count = 0;
+  for(var i=0;i<files.length;i++) {
+    var url = await toDataUrl(files[i]);
+    var folder = currentFolder === 'all' ? '' : currentFolder;
+    await dbPut('memes', { dataUrl: url, folder: folder, added: Date.now() });
     count++;
   }
   e.target.value = '';
-  showToast(`✓ Added ${count} meme${count !== 1 ? 's' : ''}`);
+  showToast('🌸 Added ' + count + ' meme' + (count!==1?'s':''));
   await renderGrid();
 });
 
-function fileToDataUrl(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result);
+function toDataUrl(file) {
+  return new Promise(function(res,rej){
+    var r = new FileReader();
+    r.onload = function(){ res(r.result); };
     r.onerror = rej;
     r.readAsDataURL(file);
   });
 }
 
-// ─── LIGHTBOX ─────────────────────────────────────────────────────────
+// ── LIGHTBOX ──────────────────────────────────────────────────────────
+function getMeme(id) {
+  for(var i=0;i<memes.length;i++) if(memes[i].id===id) return memes[i];
+  return null;
+}
+
 function openLightbox(id) {
-  const meme = memes.find(m => m.id === id);
-  if (!meme) return;
+  var m = getMeme(id); if(!m) return;
   lightboxId = id;
-  document.getElementById('lb-img').src = meme.dataUrl;
+  document.getElementById('lb-img').src = m.dataUrl;
+  document.getElementById('lb-folder-tag').textContent = m.folder ? '📂 ' + m.folder : '';
   document.getElementById('lightbox').classList.add('open');
 }
 
-document.getElementById('lb-close').onclick = () => {
+document.getElementById('lb-close').onclick = function() {
   document.getElementById('lightbox').classList.remove('open');
   lightboxId = null;
 };
 
-document.getElementById('lb-copy').onclick = () => copyMeme(lightboxId);
+// SHARE — Web Share API with file (works iOS 14+), else open in new tab
+document.getElementById('lb-share').onclick = async function() {
+  var m = getMeme(lightboxId); if(!m) return;
 
-document.getElementById('lb-share').onclick = async () => {
-  const meme = memes.find(m => m.id === lightboxId);
-  if (!meme) return;
-  try {
-    const blob = dataUrlToBlob(meme.dataUrl);
-    const file = new File([blob], 'meme.jpg', { type: blob.type });
-    await navigator.share({ files: [file] });
-  } catch { showToast('Share not available'); }
+  if (navigator.share) {
+    try {
+      var blob = b64toBlob(m.dataUrl);
+      var ext = blob.type === 'image/png' ? '.png' : (blob.type === 'image/gif' ? '.gif' : '.jpg');
+      var file = new File([blob], 'meme' + ext, { type: blob.type });
+      // canShare check
+      var shareData = { files: [file] };
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return;
+      }
+      // try without canShare check for older iOS
+      await navigator.share(shareData);
+      return;
+    } catch(err) {
+      if (err && err.name === 'AbortError') return; // user cancelled
+      // fall through
+    }
+  }
+
+  // Fallback: open image directly — user long-presses to Save / Copy
+  openImageTab(m.dataUrl);
 };
 
-document.getElementById('lb-delete').onclick = async () => {
-  if (!lightboxId) return;
-  await dbDelete('memes', lightboxId);
+document.getElementById('lb-move').onclick = function() {
+  if(!lightboxId) return;
+  showMoveModal([lightboxId], true);
+};
+
+document.getElementById('lb-delete').onclick = async function() {
+  if(!lightboxId) return;
+  await dbDel('memes', lightboxId);
   document.getElementById('lightbox').classList.remove('open');
   lightboxId = null;
   showToast('🗑 Deleted');
   await renderGrid();
 };
 
-// ─── COPY ─────────────────────────────────────────────────────────────
-async function copyMeme(id) {
-  const meme = memes.find(m => m.id === id) || await dbGet('memes', id);
-  if (!meme) return;
-  try {
-    const blob = dataUrlToBlob(meme.dataUrl);
-    await navigator.clipboard.write([
-      new ClipboardItem({ [blob.type]: blob })
-    ]);
-    showToast('📋 Copied to clipboard!');
-  } catch {
-    // Fallback: open in new tab for manual copy
-    const win = window.open();
-    win.document.write(`<img src="${meme.dataUrl}" style="max-width:100%">`);
-    showToast('Opened image — long press to copy');
-  }
+function openImageTab(dataUrl) {
+  // Build a minimal page that shows the image full screen
+  // User can long-press → "Add to Photos" / "Copy"
+  var html = '<!DOCTYPE html><html><head>'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<style>*{margin:0;padding:0;box-sizing:border-box}'
+    + 'body{background:#fdf0f5;display:flex;align-items:center;justify-content:center;min-height:100vh}'
+    + 'img{max-width:100%;max-height:100vh;border-radius:12px}'
+    + 'p{position:fixed;bottom:24px;left:0;right:0;text-align:center;color:#c8a0b8;font-family:sans-serif;font-size:13px}'
+    + '</style></head><body>'
+
+```
++ '<img src="' + dataUrl + '">'
++ '<p>Hold image → Save to Photos or Copy</p>'
++ '</body></html>';
+```
+
+var win = window.open(’’, ‘_blank’);
+if (win) {
+win.document.write(html);
+win.document.close();
+showToast(‘Hold image → Save to Photos’);
+} else {
+showToast(‘Allow pop-ups then try again’);
+}
 }
 
-function dataUrlToBlob(dataUrl) {
-  const arr = dataUrl.split(',');
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  const u8arr = new Uint8Array(bstr.length);
-  for (let i = 0; i < bstr.length; i++) u8arr[i] = bstr.charCodeAt(i);
-  return new Blob([u8arr], { type: mime });
+function b64toBlob(dataUrl) {
+var parts = dataUrl.split(’,’);
+var mime = parts[0].match(/:(.*?);/)[1];
+var raw = atob(parts[1]);
+var arr = new Uint8Array(raw.length);
+for(var i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
+return new Blob([arr], { type: mime });
 }
 
-// ─── SELECTION ACTIONS ────────────────────────────────────────────────
-document.getElementById('sel-cancel').onclick = () => exitSelect();
-
-document.getElementById('sel-copy').onclick = async () => {
-  if (selected.size === 1) {
-    await copyMeme([...selected][0]);
-  } else {
-    showToast('Select 1 meme to copy');
-  }
-};
-
-document.getElementById('sel-delete').onclick = async () => {
-  if (!selected.size) return;
-  for (const id of selected) await dbDelete('memes', id);
-  showToast(`🗑 Deleted ${selected.size}`);
-  exitSelect();
-  await renderGrid();
-};
-
-document.getElementById('sel-move').onclick = () => {
-  if (!selected.size) return;
-  showMoveFolderModal();
-};
-
-// ─── MODALS ───────────────────────────────────────────────────────────
-function openModal(title, bodyHTML, onConfirm) {
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-body').innerHTML = bodyHTML;
-  document.getElementById('modal-overlay').classList.add('open');
-  return new Promise(res => {
-    document.getElementById('modal-overlay').onclick = e => {
-      if (e.target === document.getElementById('modal-overlay')) closeModal(res, null);
-    };
-    window.__modalResolve = res;
-  });
+// ── MODALS ────────────────────────────────────────────────────────────
+function openModal(title, body) {
+document.getElementById(‘modal-title’).textContent = title;
+document.getElementById(‘modal-body’).innerHTML = body;
+document.getElementById(‘modal-overlay’).classList.add(‘open’);
 }
-
-function closeModal(res, val) {
-  document.getElementById('modal-overlay').classList.remove('open');
-  if (res) res(val);
-  if (window.__modalResolve && val !== undefined) { window.__modalResolve(val); window.__modalResolve = null; }
+function closeModal() {
+document.getElementById(‘modal-overlay’).classList.remove(‘open’);
 }
+document.getElementById(‘modal-overlay’).addEventListener(‘click’, function(e) {
+if(e.target === document.getElementById(‘modal-overlay’)) closeModal();
+});
 
 function showNewFolderModal() {
-  const body = `
-    <input class="modal-input" id="folder-name-input" type="text" placeholder="Folder name..." maxlength="30">
-    <button class="modal-btn primary" id="modal-confirm">Create Folder</button>
-    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
-  `;
-  openModal('New Folder', body);
-  const input = document.getElementById('folder-name-input');
-  input.focus();
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') doCreateFolder(); });
-  document.getElementById('modal-confirm').onclick = doCreateFolder;
-  document.getElementById('modal-cancel').onclick = () => closeModal(null);
+openModal(‘New Folder ✦’,
+‘<input class="modal-input" id="fn-input" type="text" placeholder="Folder name…" maxlength="30">’
++ ‘<button class="modal-btn primary" id="fn-ok">Create</button>’
++ ‘<button class="modal-btn secondary" id="fn-cancel">Cancel</button>’);
+var inp = document.getElementById(‘fn-input’);
+setTimeout(function(){ inp.focus(); }, 80);
+inp.addEventListener(‘keydown’, function(e){ if(e.key===‘Enter’) doCreate(); });
+document.getElementById(‘fn-ok’).onclick = doCreate;
+document.getElementById(‘fn-cancel’).onclick = closeModal;
+
+async function doCreate() {
+var name = document.getElementById(‘fn-input’).value.trim();
+if(!name){ showToast(‘Enter a name ✦’); return; }
+if(folders.some(function(f){ return f.name===name; })){ showToast(‘Already exists~’); return; }
+await dbPut(‘folders’, { name: name });
+folders.push({ name: name });
+closeModal(); renderFolderBar();
+showToast(‘📂 Created “’ + name + ‘”’);
+}
 }
 
-async function doCreateFolder() {
-  const name = document.getElementById('folder-name-input').value.trim();
-  if (!name) { showToast('Enter a folder name'); return; }
-  const ok = await createFolder(name);
-  closeModal(null);
-  if (ok) showToast(`📂 Created "${name}"`);
-  else showToast('Folder already exists');
+function showMoveModal(ids, fromLb) {
+var opts = folders.map(function(f){
+return ‘<div class="folder-option" data-f="' + f.name + '">📂 ’ + f.name + ‘</div>’;
+}).join(’’);
+openModal(‘Move to… ✦’,
+‘<div class="folder-list">’
++ ‘<div class="folder-option" data-f="">🌸 All (no folder)</div>’
++ opts + ‘</div>’
++ ‘<button class="modal-btn secondary" id="mv-cancel">Cancel</button>’);
+document.getElementById(‘mv-cancel’).onclick = closeModal;
+document.querySelectorAll(’.folder-option’).forEach(function(opt){
+opt.onclick = async function() {
+var target = opt.dataset.f;
+for(var i=0;i<ids.length;i++){
+var m = await dbGet(‘memes’, ids[i]);
+if(m){ m.folder = target; await dbPut(‘memes’, m); }
+}
+closeModal();
+if(fromLb){ document.getElementById(‘lightbox’).classList.remove(‘open’); lightboxId = null; }
+else { exitSelect(); }
+showToast(’📂 Moved ’ + ids.length);
+await renderGrid();
+};
+});
 }
 
-function showMoveFolderModal() {
-  const opts = folders.map(f => `
-    <div class="folder-option" data-folder="${f.name}">📂 ${f.name}</div>
-  `).join('');
-  const noFolderOpt = `<div class="folder-option" data-folder="">📁 No folder (All)</div>`;
-
-  const body = `
-    <div class="folder-list">${noFolderOpt}${opts}</div>
-    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
-  `;
-  openModal(`Move ${selected.size} meme${selected.size !== 1 ? 's' : ''} to...`, body);
-  document.getElementById('modal-cancel').onclick = () => closeModal(null);
-  document.querySelectorAll('.folder-option').forEach(opt => {
-    opt.onclick = async () => {
-      const target = opt.dataset.folder;
-      for (const id of selected) {
-        const meme = await dbGet('memes', id);
-        if (meme) { meme.folder = target; await dbPut('memes', meme); }
-      }
-      closeModal(null);
-      showToast(`📂 Moved ${selected.size} meme${selected.size !== 1 ? 's' : ''}`);
-      exitSelect();
-      await renderGrid();
-    };
-  });
+function showFolderOptions(name) {
+openModal(’”’ + name + ‘”’,
+‘<button class="modal-btn secondary" id="fo-rename">✏️ Rename</button>’
++ ‘<button class="modal-btn danger" id="fo-delete">🗑 Delete Folder</button>’
++ ‘<button class="modal-btn secondary" id="fo-cancel">Cancel</button>’);
+document.getElementById(‘fo-cancel’).onclick = closeModal;
+document.getElementById(‘fo-rename’).onclick = function(){ closeModal(); showRenameModal(name); };
+document.getElementById(‘fo-delete’).onclick = async function() {
+var all = await dbGetAll(‘memes’,‘folder’,name);
+for(var i=0;i<all.length;i++){ all[i].folder=’’; await dbPut(‘memes’,all[i]); }
+await dbDel(‘folders’, name);
+folders = folders.filter(function(f){ return f.name!==name; });
+if(currentFolder===name) currentFolder=‘all’;
+closeModal(); renderFolderBar(); await renderGrid();
+showToast(‘🗑 Folder deleted’);
+};
 }
 
-function showFolderOptions(folderName) {
-  const body = `
-    <button class="modal-btn secondary" id="rename-folder-btn">✏️ Rename</button>
-    <button class="modal-btn" id="delete-folder-btn" style="color:#ff6e6e;border:1px solid #ff6e6e44;background:var(--surface2)">🗑 Delete Folder</button>
-    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
-  `;
-  openModal(`"${folderName}"`, body);
-  document.getElementById('modal-cancel').onclick = () => closeModal(null);
-  document.getElementById('rename-folder-btn').onclick = () => { closeModal(null); showRenameFolderModal(folderName); };
-  document.getElementById('delete-folder-btn').onclick = async () => {
-    // Move memes to no-folder
-    const inFolder = await dbGetAll('memes', 'folder', folderName);
-    for (const m of inFolder) { m.folder = ''; await dbPut('memes', m); }
-    await dbDelete('folders', folderName);
-    folders = folders.filter(f => f.name !== folderName);
-    if (currentFolder === folderName) currentFolder = 'all';
-    closeModal(null);
-    renderFolderBar();
-    await renderGrid();
-    showToast(`🗑 Deleted folder "${folderName}"`);
-  };
+function showRenameModal(old) {
+openModal(‘Rename ✦’,
+‘<input class="modal-input" id="rn-input" type="text" value="' + old + '" maxlength="30">’
++ ‘<button class="modal-btn primary" id="rn-ok">Save</button>’
++ ‘<button class="modal-btn secondary" id="rn-cancel">Cancel</button>’);
+var inp = document.getElementById(‘rn-input’);
+setTimeout(function(){ inp.focus(); inp.select(); }, 80);
+document.getElementById(‘rn-cancel’).onclick = closeModal;
+document.getElementById(‘rn-ok’).onclick = async function() {
+var nw = inp.value.trim();
+if(!nw || nw===old){ closeModal(); return; }
+if(folders.some(function(f){ return f.name===nw; })){ showToast(‘Name taken~’); return; }
+await dbDel(‘folders’, old);
+await dbPut(‘folders’, { name: nw });
+var all = await dbGetAll(‘memes’,‘folder’,old);
+for(var i=0;i<all.length;i++){ all[i].folder=nw; await dbPut(‘memes’,all[i]); }
+folders = folders.filter(function(f){ return f.name!==old; });
+folders.push({ name: nw });
+if(currentFolder===old) currentFolder=nw;
+closeModal(); renderFolderBar(); await renderGrid();
+showToast(‘✓ Renamed to “’ + nw + ‘”’);
+};
 }
 
-function showRenameFolderModal(oldName) {
-  const body = `
-    <input class="modal-input" id="rename-input" type="text" placeholder="New name..." value="${oldName}" maxlength="30">
-    <button class="modal-btn primary" id="modal-confirm">Rename</button>
-    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
-  `;
-  openModal('Rename Folder', body);
-  const input = document.getElementById('rename-input');
-  input.focus(); input.select();
-  document.getElementById('modal-cancel').onclick = () => closeModal(null);
-  document.getElementById('modal-confirm').onclick = async () => {
-    const newName = input.value.trim();
-    if (!newName || newName === oldName) { closeModal(null); return; }
-    if (folders.find(f => f.name === newName)) { showToast('Name taken'); return; }
-    await dbDelete('folders', oldName);
-    await dbPut('folders', { name: newName });
-    const inFolder = await dbGetAll('memes', 'folder', oldName);
-    for (const m of inFolder) { m.folder = newName; await dbPut('memes', m); }
-    folders = folders.filter(f => f.name !== oldName);
-    folders.push({ name: newName });
-    if (currentFolder === oldName) currentFolder = newName;
-    closeModal(null);
-    renderFolderBar();
-    await renderGrid();
-    showToast(`✓ Renamed to "${newName}"`);
-  };
-}
-
-// ─── TOAST ────────────────────────────────────────────────────────────
-let toastTimer;
+// ── TOAST ─────────────────────────────────────────────────────────────
+var toastT;
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+var t = document.getElementById(‘toast’);
+t.textContent = msg;
+t.classList.add(‘show’);
+clearTimeout(toastT);
+toastT = setTimeout(function(){ t.classList.remove(‘show’); }, 2400);
 }
 
-// ─── START ────────────────────────────────────────────────────────────
 init();
 </script>
 
