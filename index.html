@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MemeVault">
+<meta name="theme-color" content="#0a0a0f">
+<title>MemeVault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #7fff6e;
+    --accent2: #ff6ef7;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --radius: 14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+height: 100%; width: 100%;
+background: var(–bg);
+color: var(–text);
+font-family: ‘Space Mono’, monospace;
+overflow: hidden;
+position: fixed;
+}
+
+#app {
+display: flex;
+flex-direction: column;
+height: 100%;
+padding-top: var(–safe-top);
+padding-bottom: var(–safe-bot);
+}
+
+/* HEADER */
+.header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 14px 18px 10px;
+border-bottom: 1px solid var(–border);
+background: var(–bg);
+flex-shrink: 0;
+gap: 10px;
+}
+
+.header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.back-btn {
+background: none; border: none; color: var(–accent);
+font-family: ‘Space Mono’, monospace; font-size: 18px;
+cursor: pointer; padding: 4px 2px; flex-shrink: 0;
+display: none;
+}
+
+.logo {
+font-family: ‘Syne’, sans-serif; font-weight: 800;
+font-size: 22px; letter-spacing: -0.5px;
+background: linear-gradient(135deg, var(–accent), var(–accent2));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.icon-btn {
+background: var(–surface2); border: 1px solid var(–border);
+color: var(–text); width: 38px; height: 38px; border-radius: 10px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; font-size: 17px; flex-shrink: 0;
+transition: background 0.15s, transform 0.1s;
+}
+.icon-btn:active { transform: scale(0.92); background: var(–border); }
+.icon-btn.accent { background: var(–accent); color: #000; border-color: var(–accent); }
+
+/* FOLDER BAR */
+.folder-bar {
+display: flex; align-items: center; gap: 8px;
+padding: 10px 18px 8px; overflow-x: auto;
+flex-shrink: 0; scrollbar-width: none;
+border-bottom: 1px solid var(–border);
+}
+.folder-bar::-webkit-scrollbar { display: none; }
+
+.folder-chip {
+display: flex; align-items: center; gap: 6px;
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 20px; padding: 5px 12px 5px 10px;
+font-family: ‘Space Mono’, monospace; font-size: 11px;
+color: var(–muted); white-space: nowrap; cursor: pointer;
+transition: all 0.15s; flex-shrink: 0;
+}
+.folder-chip.active {
+background: var(–surface2); border-color: var(–accent);
+color: var(–accent);
+}
+.folder-chip .chip-count {
+background: var(–border); border-radius: 10px;
+padding: 1px 6px; font-size: 10px; color: var(–muted);
+}
+.folder-chip.active .chip-count { background: var(–accent); color: #000; }
+
+.new-folder-btn {
+background: none; border: 1px dashed var(–border);
+border-radius: 20px; padding: 5px 12px;
+color: var(–muted); font-family: ‘Space Mono’, monospace;
+font-size: 11px; cursor: pointer; white-space: nowrap;
+flex-shrink: 0; transition: all 0.15s;
+}
+.new-folder-btn:active { border-color: var(–accent); color: var(–accent); }
+
+/* GRID */
+.grid-container {
+flex: 1; overflow-y: auto; overflow-x: hidden;
+padding: 12px; scrollbar-width: none;
+}
+.grid-container::-webkit-scrollbar { display: none; }
+
+.grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 6px;
+}
+
+.meme-card {
+position: relative; aspect-ratio: 1;
+border-radius: 10px; overflow: hidden;
+background: var(–surface); cursor: pointer;
+border: 2px solid transparent;
+transition: transform 0.15s, border-color 0.15s;
+}
+.meme-card:active { transform: scale(0.95); }
+.meme-card.selected { border-color: var(–accent2); }
+.meme-card img {
+width: 100%; height: 100%;
+object-fit: cover; display: block;
+}
+.meme-card .sel-badge {
+position: absolute; top: 5px; right: 5px;
+width: 22px; height: 22px; border-radius: 50%;
+background: var(–accent2); display: none;
+align-items: center; justify-content: center;
+font-size: 12px; color: #000; font-weight: bold;
+}
+.meme-card.selected .sel-badge { display: flex; }
+
+/* EMPTY STATE */
+.empty {
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+padding: 60px 30px; text-align: center; gap: 12px;
+}
+.empty-icon { font-size: 52px; opacity: 0.4; }
+.empty-title {
+font-family: ‘Syne’, sans-serif; font-weight: 700;
+font-size: 18px; color: var(–muted);
+}
+.empty-sub { font-size: 11px; color: var(–muted); line-height: 1.6; }
+
+/* SELECTION BAR */
+.sel-bar {
+position: fixed; bottom: calc(var(–safe-bot) + 12px);
+left: 50%; transform: translateX(-50%);
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 22px; padding: 8px 12px;
+display: none; align-items: center; gap: 8px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+z-index: 100;
+}
+.sel-bar.visible { display: flex; }
+
+.sel-action {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 14px; padding: 7px 14px;
+color: var(–text); font-family: ‘Space Mono’, monospace;
+font-size: 11px; cursor: pointer; display: flex;
+align-items: center; gap: 6px; white-space: nowrap;
+}
+.sel-action:active { background: var(–border); }
+.sel-action.danger { color: #ff6e6e; border-color: #ff6e6e33; }
+.sel-action.success { color: var(–accent); border-color: var(–accent); background: rgba(127,255,110,0.08); }
+
+/* MODAL */
+.modal-overlay {
+position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+z-index: 200; display: flex; align-items: flex-end;
+opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+background: var(–surface); border-radius: var(–radius) var(–radius) 0 0;
+width: 100%; padding: 20px 20px calc(20px + var(–safe-bot));
+transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
+border-top: 1px solid var(–border);
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-title {
+font-family: ‘Syne’, sans-serif; font-weight: 700;
+font-size: 17px; margin-bottom: 16px; text-align: center;
+}
+
+.modal-input {
+width: 100%; background: var(–surface2); border: 1px solid var(–border);
+border-radius: 10px; padding: 12px 14px;
+color: var(–text); font-family: ‘Space Mono’, monospace;
+font-size: 14px; outline: none; margin-bottom: 12px;
+}
+.modal-input:focus { border-color: var(–accent); }
+
+.modal-btn {
+width: 100%; padding: 13px;
+border-radius: 12px; border: none; cursor: pointer;
+font-family: ‘Syne’, sans-serif; font-weight: 700;
+font-size: 15px; margin-bottom: 8px;
+transition: transform 0.1s;
+}
+.modal-btn:active { transform: scale(0.97); }
+.modal-btn.primary { background: var(–accent); color: #000; }
+.modal-btn.secondary { background: var(–surface2); color: var(–text); border: 1px solid var(–border); }
+
+/* LIGHTBOX */
+.lightbox {
+position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+z-index: 300; display: none; flex-direction: column;
+align-items: center; justify-content: center;
+padding: 0;
+}
+.lightbox.open { display: flex; }
+
+.lb-img-wrap {
+flex: 1; width: 100%; display: flex;
+align-items: center; justify-content: center;
+overflow: hidden; padding: 60px 0 0;
+}
+.lb-img-wrap img {
+max-width: 100%; max-height: 100%;
+object-fit: contain; border-radius: 8px;
+}
+
+.lb-actions {
+display: flex; gap: 10px; padding: 16px 20px calc(16px + var(–safe-bot));
+width: 100%; justify-content: center;
+}
+.lb-btn {
+flex: 1; max-width: 160px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 14px; padding: 12px;
+color: var(–text); font-family: ‘Space Mono’, monospace;
+font-size: 12px; cursor: pointer; text-align: center;
+display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.lb-btn:active { background: var(–border); }
+.lb-btn.primary { background: var(–accent); color: #000; border-color: var(–accent); font-weight: bold; }
+
+.lb-close {
+position: absolute; top: calc(var(–safe-top) + 12px); right: 16px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 50%; width: 36px; height: 36px;
+color: var(–text); font-size: 18px; cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+z-index: 10;
+}
+
+/* TOAST */
+.toast {
+position: fixed; top: calc(var(–safe-top) + 60px);
+left: 50%; transform: translateX(-50%) translateY(-10px);
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 20px; padding: 8px 18px;
+font-size: 12px; color: var(–text);
+opacity: 0; transition: opacity 0.2s, transform 0.2s;
+pointer-events: none; z-index: 500; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* FOLDER SELECT in modal */
+.folder-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
+.folder-option {
+display: flex; align-items: center; gap: 10px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 10px; padding: 10px 14px; cursor: pointer;
+font-size: 13px; transition: border-color 0.15s;
+}
+.folder-option:active { border-color: var(–accent); }
+.folder-option.selected-opt { border-color: var(–accent); color: var(–accent); }
+
+/* UPLOAD BUTTON SPECIAL */
+#upload-input { display: none; }
+
+.count-label {
+font-size: 10px; color: var(–muted);
+padding: 0 18px 8px; flex-shrink: 0;
+}
+
+/* LONG PRESS indicator */
+.meme-card::after {
+content: ‘’; position: absolute; inset: 0;
+background: rgba(127,255,110,0); transition: background 0.1s;
+border-radius: 8px;
+}
+</style>
+
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <button class="back-btn" id="back-btn">←</button>
+      <div class="logo" id="header-title">MemeVault</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="select-btn" title="Select">☑</button>
+      <label class="icon-btn accent" title="Add memes">
+        <span>＋</span>
+        <input type="file" id="upload-input" accept="image/*" multiple>
+      </label>
+    </div>
+  </div>
+
+  <!-- FOLDER BAR -->
+
+  <div class="folder-bar" id="folder-bar">
+    <div class="folder-chip active" data-folder="all">
+      📁 All <span class="chip-count" id="count-all">0</span>
+    </div>
+    <button class="new-folder-btn" id="new-folder-btn">+ New Folder</button>
+  </div>
+
+  <div class="count-label" id="count-label"></div>
+
+  <!-- GRID -->
+
+  <div class="grid-container">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- SELECTION BAR -->
+
+  <div class="sel-bar" id="sel-bar">
+    <button class="sel-action" id="sel-copy">📋 Copy</button>
+    <button class="sel-action" id="sel-move">📂 Move</button>
+    <button class="sel-action danger" id="sel-delete">🗑 Delete</button>
+    <button class="sel-action" id="sel-cancel">✕</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close">✕</button>
+  <div class="lb-img-wrap"><img id="lb-img" src="" alt=""></div>
+  <div class="lb-actions">
+    <button class="lb-btn primary" id="lb-copy">📋 Copy</button>
+    <button class="lb-btn" id="lb-share">↑ Share</button>
+    <button class="lb-btn danger" id="lb-delete" style="color:#ff6e6e;border-color:#ff6e6e44">🗑</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-title" id="modal-title">New Folder</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DB ──────────────────────────────────────────────────────────────
+const DB_NAME = 'memevault', DB_VER = 1;
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('memes')) {
+        const s = d.createObjectStore('memes', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('folder', 'folder', { unique: false });
+      }
+      if (!d.objectStoreNames.contains('folders')) {
+        d.createObjectStore('folders', { keyPath: 'name' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror = () => rej(req.error);
+  });
+}
+
+function tx(store, mode = 'readonly') {
+  return db.transaction(store, mode).objectStore(store);
+}
+
+function dbGet(store, key) {
+  return new Promise((res, rej) => { const r = tx(store).get(key); r.onsuccess = () => res(r.result); r.onerror = rej; });
+}
+
+function dbGetAll(store, index, value) {
+  return new Promise((res, rej) => {
+    let req;
+    if (index && value !== undefined) {
+      req = tx(store).index(index).getAll(value);
+    } else {
+      req = tx(store).getAll();
+    }
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+
+function dbPut(store, data) {
+  return new Promise((res, rej) => {
+    const r = tx(store, 'readwrite').put(data);
+    r.onsuccess = () => res(r.result);
+    r.onerror = rej;
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise((res, rej) => {
+    const r = tx(store, 'readwrite').delete(key);
+    r.onsuccess = () => res();
+    r.onerror = rej;
+  });
+}
+
+function dbCount(store, index, value) {
+  return new Promise((res, rej) => {
+    const req = index ? tx(store).index(index).count(value) : tx(store).count();
+    req.onsuccess = () => res(req.result);
+    req.onerror = rej;
+  });
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────
+let currentFolder = 'all'; // 'all' or folder name
+let folders = []; // array of {name}
+let memes = [];   // current view
+let selecting = false;
+let selected = new Set();
+let lightboxId = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+async function init() {
+  await openDB();
+  await loadFolders();
+  await renderGrid();
+}
+
+// ─── FOLDERS ─────────────────────────────────────────────────────────
+async function loadFolders() {
+  folders = await dbGetAll('folders');
+  renderFolderBar();
+}
+
+async function createFolder(name) {
+  name = name.trim();
+  if (!name || folders.find(f => f.name === name)) return false;
+  await dbPut('folders', { name });
+  folders.push({ name });
+  renderFolderBar();
+  return true;
+}
+
+function renderFolderBar() {
+  const bar = document.getElementById('folder-bar');
+  bar.innerHTML = '';
+
+  // "All" chip
+  const allChip = createChip('📁 All', 'all', null);
+  bar.appendChild(allChip);
+
+  // Folder chips
+  folders.forEach(f => {
+    const chip = createChip('📂 ' + f.name, f.name, f.name);
+    bar.appendChild(chip);
+  });
+
+  // New folder btn
+  const btn = document.createElement('button');
+  btn.className = 'new-folder-btn';
+  btn.textContent = '+ New Folder';
+  btn.onclick = showNewFolderModal;
+  bar.appendChild(btn);
+
+  updateCounts();
+}
+
+function createChip(label, folder, folderName) {
+  const chip = document.createElement('div');
+  chip.className = 'folder-chip' + (currentFolder === folder ? ' active' : '');
+  chip.innerHTML = `${label} <span class="chip-count" id="count-${folder || 'all'}">0</span>`;
+  chip.onclick = () => switchFolder(folder);
+  if (folderName) {
+    chip.addEventListener('pointerdown', e => {
+      const timer = setTimeout(() => showFolderOptions(folderName), 600);
+      chip.addEventListener('pointerup', () => clearTimeout(timer), { once: true });
+      chip.addEventListener('pointermove', () => clearTimeout(timer), { once: true });
+    });
+  }
+  return chip;
+}
+
+async function updateCounts() {
+  const allCount = await dbCount('memes');
+  const el = document.getElementById('count-all');
+  if (el) el.textContent = allCount;
+
+  for (const f of folders) {
+    const c = await dbCount('memes', 'folder', f.name);
+    const el = document.getElementById('count-' + f.name);
+    if (el) el.textContent = c;
+  }
+}
+
+async function switchFolder(folder) {
+  currentFolder = folder;
+  exitSelect();
+  document.querySelectorAll('.folder-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.folder === folder || (!c.dataset.folder && folder === 'all'));
+  });
+  // Re-render chips cleanly
+  renderFolderBar();
+  document.querySelector(`[data-folder="${folder}"]`);
+  // force active on right chip
+  document.querySelectorAll('.folder-chip').forEach(c => {
+    const isAll = folder === 'all' && c.textContent.includes('All');
+    const isFolder = c.textContent.includes(folder);
+    // just re-render
+  });
+  renderFolderBar();
+  await renderGrid();
+}
+
+// ─── GRID ─────────────────────────────────────────────────────────────
+async function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  if (currentFolder === 'all') {
+    memes = await dbGetAll('memes');
+  } else {
+    memes = await dbGetAll('memes', 'folder', currentFolder);
+  }
+
+  // sort newest first
+  memes.sort((a, b) => b.id - a.id);
+
+  const countLabel = document.getElementById('count-label');
+  countLabel.textContent = memes.length ? `${memes.length} meme${memes.length !== 1 ? 's' : ''}` : '';
+
+  if (!memes.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.style.gridColumn = '1 / -1';
+    empty.innerHTML = `
+      <div class="empty-icon">🖼️</div>
+      <div class="empty-title">No memes here yet</div>
+      <div class="empty-sub">Tap the <strong style="color:var(--accent)">＋</strong> button to<br>import from your photos</div>
+    `;
+    grid.appendChild(empty);
+    return;
+  }
+
+  memes.forEach(meme => {
+    const card = document.createElement('div');
+    card.className = 'meme-card' + (selected.has(meme.id) ? ' selected' : '');
+    card.dataset.id = meme.id;
+
+    const img = document.createElement('img');
+    img.src = meme.dataUrl;
+    img.loading = 'lazy';
+    card.appendChild(img);
+
+    const badge = document.createElement('div');
+    badge.className = 'sel-badge';
+    badge.textContent = '✓';
+    card.appendChild(badge);
+
+    // Long press for select mode
+    let pressTimer;
+    card.addEventListener('pointerdown', e => {
+      pressTimer = setTimeout(() => {
+        enterSelect();
+        toggleSelect(meme.id, card);
+      }, 500);
+    });
+    card.addEventListener('pointerup', () => clearTimeout(pressTimer));
+    card.addEventListener('pointermove', () => clearTimeout(pressTimer));
+
+    card.addEventListener('click', e => {
+      if (selecting) {
+        toggleSelect(meme.id, card);
+      } else {
+        openLightbox(meme.id);
+      }
+    });
+
+    grid.appendChild(card);
+  });
+
+  updateCounts();
+}
+
+// ─── SELECTION ────────────────────────────────────────────────────────
+function enterSelect() {
+  selecting = true;
+  selected.clear();
+  document.getElementById('select-btn').style.color = 'var(--accent)';
+  updateSelBar();
+}
+
+function exitSelect() {
+  selecting = false;
+  selected.clear();
+  document.querySelectorAll('.meme-card.selected').forEach(c => c.classList.remove('selected'));
+  document.getElementById('select-btn').style.color = '';
+  document.getElementById('sel-bar').classList.remove('visible');
+}
+
+function toggleSelect(id, card) {
+  if (selected.has(id)) { selected.delete(id); card.classList.remove('selected'); }
+  else { selected.add(id); card.classList.add('selected'); }
+  updateSelBar();
+}
+
+function updateSelBar() {
+  const bar = document.getElementById('sel-bar');
+  if (selecting && selected.size > 0) {
+    bar.classList.add('visible');
+  } else if (selecting) {
+    bar.classList.add('visible');
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+document.getElementById('select-btn').onclick = () => {
+  if (selecting) exitSelect();
+  else enterSelect();
+};
+
+// ─── UPLOAD ───────────────────────────────────────────────────────────
+document.getElementById('upload-input').addEventListener('change', async e => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  let count = 0;
+  for (const file of files) {
+    const dataUrl = await fileToDataUrl(file);
+    const folder = currentFolder === 'all' ? '' : currentFolder;
+    await dbPut('memes', { dataUrl, folder, name: file.name, added: Date.now() });
+    count++;
+  }
+  e.target.value = '';
+  showToast(`✓ Added ${count} meme${count !== 1 ? 's' : ''}`);
+  await renderGrid();
+});
+
+function fileToDataUrl(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ─── LIGHTBOX ─────────────────────────────────────────────────────────
+function openLightbox(id) {
+  const meme = memes.find(m => m.id === id);
+  if (!meme) return;
+  lightboxId = id;
+  document.getElementById('lb-img').src = meme.dataUrl;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+document.getElementById('lb-close').onclick = () => {
+  document.getElementById('lightbox').classList.remove('open');
+  lightboxId = null;
+};
+
+document.getElementById('lb-copy').onclick = () => copyMeme(lightboxId);
+
+document.getElementById('lb-share').onclick = async () => {
+  const meme = memes.find(m => m.id === lightboxId);
+  if (!meme) return;
+  try {
+    const blob = dataUrlToBlob(meme.dataUrl);
+    const file = new File([blob], 'meme.jpg', { type: blob.type });
+    await navigator.share({ files: [file] });
+  } catch { showToast('Share not available'); }
+};
+
+document.getElementById('lb-delete').onclick = async () => {
+  if (!lightboxId) return;
+  await dbDelete('memes', lightboxId);
+  document.getElementById('lightbox').classList.remove('open');
+  lightboxId = null;
+  showToast('🗑 Deleted');
+  await renderGrid();
+};
+
+// ─── COPY ─────────────────────────────────────────────────────────────
+async function copyMeme(id) {
+  const meme = memes.find(m => m.id === id) || await dbGet('memes', id);
+  if (!meme) return;
+  try {
+    const blob = dataUrlToBlob(meme.dataUrl);
+    await navigator.clipboard.write([
+      new ClipboardItem({ [blob.type]: blob })
+    ]);
+    showToast('📋 Copied to clipboard!');
+  } catch {
+    // Fallback: open in new tab for manual copy
+    const win = window.open();
+    win.document.write(`<img src="${meme.dataUrl}" style="max-width:100%">`);
+    showToast('Opened image — long press to copy');
+  }
+}
+
+function dataUrlToBlob(dataUrl) {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  const u8arr = new Uint8Array(bstr.length);
+  for (let i = 0; i < bstr.length; i++) u8arr[i] = bstr.charCodeAt(i);
+  return new Blob([u8arr], { type: mime });
+}
+
+// ─── SELECTION ACTIONS ────────────────────────────────────────────────
+document.getElementById('sel-cancel').onclick = () => exitSelect();
+
+document.getElementById('sel-copy').onclick = async () => {
+  if (selected.size === 1) {
+    await copyMeme([...selected][0]);
+  } else {
+    showToast('Select 1 meme to copy');
+  }
+};
+
+document.getElementById('sel-delete').onclick = async () => {
+  if (!selected.size) return;
+  for (const id of selected) await dbDelete('memes', id);
+  showToast(`🗑 Deleted ${selected.size}`);
+  exitSelect();
+  await renderGrid();
+};
+
+document.getElementById('sel-move').onclick = () => {
+  if (!selected.size) return;
+  showMoveFolderModal();
+};
+
+// ─── MODALS ───────────────────────────────────────────────────────────
+function openModal(title, bodyHTML, onConfirm) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+  document.getElementById('modal-overlay').classList.add('open');
+  return new Promise(res => {
+    document.getElementById('modal-overlay').onclick = e => {
+      if (e.target === document.getElementById('modal-overlay')) closeModal(res, null);
+    };
+    window.__modalResolve = res;
+  });
+}
+
+function closeModal(res, val) {
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (res) res(val);
+  if (window.__modalResolve && val !== undefined) { window.__modalResolve(val); window.__modalResolve = null; }
+}
+
+function showNewFolderModal() {
+  const body = `
+    <input class="modal-input" id="folder-name-input" type="text" placeholder="Folder name..." maxlength="30">
+    <button class="modal-btn primary" id="modal-confirm">Create Folder</button>
+    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
+  `;
+  openModal('New Folder', body);
+  const input = document.getElementById('folder-name-input');
+  input.focus();
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') doCreateFolder(); });
+  document.getElementById('modal-confirm').onclick = doCreateFolder;
+  document.getElementById('modal-cancel').onclick = () => closeModal(null);
+}
+
+async function doCreateFolder() {
+  const name = document.getElementById('folder-name-input').value.trim();
+  if (!name) { showToast('Enter a folder name'); return; }
+  const ok = await createFolder(name);
+  closeModal(null);
+  if (ok) showToast(`📂 Created "${name}"`);
+  else showToast('Folder already exists');
+}
+
+function showMoveFolderModal() {
+  const opts = folders.map(f => `
+    <div class="folder-option" data-folder="${f.name}">📂 ${f.name}</div>
+  `).join('');
+  const noFolderOpt = `<div class="folder-option" data-folder="">📁 No folder (All)</div>`;
+
+  const body = `
+    <div class="folder-list">${noFolderOpt}${opts}</div>
+    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
+  `;
+  openModal(`Move ${selected.size} meme${selected.size !== 1 ? 's' : ''} to...`, body);
+  document.getElementById('modal-cancel').onclick = () => closeModal(null);
+  document.querySelectorAll('.folder-option').forEach(opt => {
+    opt.onclick = async () => {
+      const target = opt.dataset.folder;
+      for (const id of selected) {
+        const meme = await dbGet('memes', id);
+        if (meme) { meme.folder = target; await dbPut('memes', meme); }
+      }
+      closeModal(null);
+      showToast(`📂 Moved ${selected.size} meme${selected.size !== 1 ? 's' : ''}`);
+      exitSelect();
+      await renderGrid();
+    };
+  });
+}
+
+function showFolderOptions(folderName) {
+  const body = `
+    <button class="modal-btn secondary" id="rename-folder-btn">✏️ Rename</button>
+    <button class="modal-btn" id="delete-folder-btn" style="color:#ff6e6e;border:1px solid #ff6e6e44;background:var(--surface2)">🗑 Delete Folder</button>
+    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
+  `;
+  openModal(`"${folderName}"`, body);
+  document.getElementById('modal-cancel').onclick = () => closeModal(null);
+  document.getElementById('rename-folder-btn').onclick = () => { closeModal(null); showRenameFolderModal(folderName); };
+  document.getElementById('delete-folder-btn').onclick = async () => {
+    // Move memes to no-folder
+    const inFolder = await dbGetAll('memes', 'folder', folderName);
+    for (const m of inFolder) { m.folder = ''; await dbPut('memes', m); }
+    await dbDelete('folders', folderName);
+    folders = folders.filter(f => f.name !== folderName);
+    if (currentFolder === folderName) currentFolder = 'all';
+    closeModal(null);
+    renderFolderBar();
+    await renderGrid();
+    showToast(`🗑 Deleted folder "${folderName}"`);
+  };
+}
+
+function showRenameFolderModal(oldName) {
+  const body = `
+    <input class="modal-input" id="rename-input" type="text" placeholder="New name..." value="${oldName}" maxlength="30">
+    <button class="modal-btn primary" id="modal-confirm">Rename</button>
+    <button class="modal-btn secondary" id="modal-cancel">Cancel</button>
+  `;
+  openModal('Rename Folder', body);
+  const input = document.getElementById('rename-input');
+  input.focus(); input.select();
+  document.getElementById('modal-cancel').onclick = () => closeModal(null);
+  document.getElementById('modal-confirm').onclick = async () => {
+    const newName = input.value.trim();
+    if (!newName || newName === oldName) { closeModal(null); return; }
+    if (folders.find(f => f.name === newName)) { showToast('Name taken'); return; }
+    await dbDelete('folders', oldName);
+    await dbPut('folders', { name: newName });
+    const inFolder = await dbGetAll('memes', 'folder', oldName);
+    for (const m of inFolder) { m.folder = newName; await dbPut('memes', m); }
+    folders = folders.filter(f => f.name !== oldName);
+    folders.push({ name: newName });
+    if (currentFolder === oldName) currentFolder = newName;
+    closeModal(null);
+    renderFolderBar();
+    await renderGrid();
+    showToast(`✓ Renamed to "${newName}"`);
+  };
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── START ────────────────────────────────────────────────────────────
+init();
+</script>
+
+</body>
+</html>
